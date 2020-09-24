@@ -4,9 +4,9 @@ Hey, thanks for stopping by.
 
 This is a small open source project to create a functional, _accessible_ web app based on the obscure (but highly entertaining) board game [Quarto](https://en.wikipedia.org/wiki/Quarto_(board_game)).
 
-The plan is to create both a single player and multiplayer PWA representation of the game. The front elm will be primarily designed using the [Elm](https://elm-lang.org) programming language, with the backend handled using Google [Firebase](https://firebase.google.com). All the code will be freely available for use and reuse where possible.
-
 ## Project Goals
+
+The plan is to create both a single player and multiplayer [Progressive Web App](https://www.howtogeek.com/342121/what-are-progressive-web-apps/) representation of the game. The front elm will be primarily designed using the [Elm](https://elm-lang.org) programming language, with the backend handled using Google [Firebase](https://firebase.google.com). All the code will be freely available for use and reuse where possible.
 
 For more details on Project Goals, please check out the Quarto [Github Project](https://github.com/tkshill/Quarto/projects/2) where tasks, thoughts, bugs, and features are tracked.
 
@@ -21,6 +21,10 @@ Also please check out the [Code of Conduct](https://github.com/tkshill/Quarto/bl
 ### Warning about contributions before October 1st
 
 This project is set to be ready for contributions by October 1st, 2020. Until that time, projects code, folders, available issues and many of the static files (including this README) may change. Contributors aren't necessarily discoraged from contributing during this setup stage, but we ask contributors create an [issue]() first, before attempting [pull requests] so the project maintainers can advise on the best course of action. 
+
+### Run and Install
+
+Coming Soon!
 
 ## Tech Stack (proposed)
 
