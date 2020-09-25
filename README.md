@@ -21,9 +21,11 @@ For more details on Project Goals, please check out the Quarto [Github Project](
 
 For more long form, in depth content, check out the project [wiki](https://github.com/tkshill/Quarto/wiki) where you can find blog style posts and articles about technology and project management.
 
-# What is Quarto
+# What is Quarto 
 
-![CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=114552](https://upload.wikimedia.org/wikipedia/commons/b/b4/QuartoSpiel.JPG)
+![Quarto Board and Pieces](https://github.com/tkshill/Quarto/blob/main/.github/486px-QuartoSpiel.JPG)
+
+*CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=114552*
 
 From Wikipedia, the free encyclopedia - 
 > Quarto is a board game for two players invented by Swiss mathematician Blaise Müller. It is published and copyrighted by Gigamic.
@@ -35,7 +37,9 @@ From Wikipedia, the free encyclopedia -
 > square or circular; and
 > hollow-top or solid-top.
 > Players take turns choosing a piece which the other player must then place on the board. A player wins by placing a piece on the board which forms a horizontal,
-> vertical, or diagonal row of four pieces, all of which have a common attribute (all short, all circular, etc.). 
+> vertical, or diagonal row of four pieces, all of which have a common attribute (all short, all circular, etc.).
+
+You can think of it as tic tac toe for adults. It's honestly a brilliant game that strikes just the right balance of strategy but also fun and ease of pickup. 
 
 ## Affiliations
 
