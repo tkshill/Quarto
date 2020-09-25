@@ -1,21 +1,6 @@
 # Introduction
 
-Thank you for so much for considering contributing to this repostory. We really appreciate all the contributors who try to make this space better.
-
-### Why we made this doc.
-
-Following these guidelines helps to communicate that you respect the time of the developers managing and developing this open source project. 
-In return, they should reciprocate that respect in addressing your issue, assessing changes, and helping you finalize your pull requests.
-
-We also want to make it as easy as possible for newbies to start helping out and docs like this provide a valuable resource for them to use.
-
-### What type of contributions we're looking for.
-
-This is an open source project and we love to receive contributions from our community — you! There are many ways to contribute, 
-from writing tutorials or blog posts, improving the documentation, submitting bug reports and feature requests,
-or writing code which can be incorporated into the application codebase itself.
-
-## Getting Started
+Thank you for so much for considering contributing to this repostory. We really appreciate all the contributors who try to make this space better. This document serves as a guide that will show you the path of least resistance for making valuable contributions to this project. Reading and following this guide shows that you respect the time of the developers managing and developing this space. In return, they will reciprocate that respect in addressing your issue, assessing changes, and helping you finalize your pull requests. This is the only way we can produce anything of value.
 
 If you're looking to start learning how to work with this repo, this doc tries to provide all the resources to get you from confusion to productivity.
 
@@ -24,6 +9,16 @@ We're not here to reinvent the wheel, so where we feel appropriate, we reference
 Most of the docs are currently written using [markdown](https://www.markdownguide.org/basic-syntax/) to make it easy to add, modify, and edit what we need to.
 
 We try not to take anything for granted, but in case we miss something, please reach out to the maintainers and let us know!
+
+We really want to make it as easy as possible for newbies to start helping out and docs like this provide a valuable resource for them to use.
+
+## What type of contributions we're looking for.
+
+This is an open source project and we love to receive contributions from our community — you! There are many ways to contribute, 
+from writing tutorials or blog posts, improving the documentation, submitting bug reports and feature requests,
+or writing code which can be incorporated into the application codebase itself.
+
+## The Basics
 
 ## Step 1. Setting up a Github Account
 
