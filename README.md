@@ -2,7 +2,7 @@
 
 Hey, thanks for stopping by.
 
-This is a small open source project to create a functional, _accessible_ web app based on the obscure (but highly entertaining) board game [Quarto](https://en.wikipedia.org/wiki/Quarto_(board_game)).
+This is a small open source project to create a functional, _accessible_ web app based on the popular (and highly entertaining) board game [Quarto](https://en.wikipedia.org/wiki/Quarto_(board_game)).
 
 # Table of Contents
 - [Project Goals](https://github.com/tkshill/Quarto/blob/main/README.md#project-goals)
@@ -23,7 +23,7 @@ For more long form, in depth content, check out the project [wiki](https://githu
 
 # What is Quarto
 
-![Image of Quarto Board and Pieces](https://upload.wikimedia.org/wikipedia/commons/b/b4/QuartoSpiel.JPG)
+![CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=114552](https://upload.wikimedia.org/wikipedia/commons/b/b4/QuartoSpiel.JPG)
 
 From Wikipedia, the free encyclopedia - 
 > Quarto is a board game for two players invented by Swiss mathematician Blaise Müller. It is published and copyrighted by Gigamic.
@@ -36,6 +36,10 @@ From Wikipedia, the free encyclopedia -
 > hollow-top or solid-top.
 > Players take turns choosing a piece which the other player must then place on the board. A player wins by placing a piece on the board which forms a horizontal,
 > vertical, or diagonal row of four pieces, all of which have a common attribute (all short, all circular, etc.). 
+
+## Affiliations
+
+This app has no affiliation with the official Quarto game, and will never *ever* become any sort've profit-seeking venture based on the Quarto IP. This is strictly for educational and entertainment purposes. If you wish to purchase the official game (we high recommend it), you can do so [here](https://en.gigamic.com/game/quarto-classic) at the official Gigamic website.
 
 # Contributing and Code of Conduct
 
