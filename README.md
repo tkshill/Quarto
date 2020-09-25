@@ -47,7 +47,7 @@ This app has no affiliation with the official Quarto game, and will never *ever*
 
 # Contributing and Code of Conduct
 
-The incentive to start this project was out of a desire to learn more about good front-end desire and accessiblity, but also as part of the 2020 [Hacktoberfest]() initiative. This is an open source project that accepts anyone and everyone who is willing to help out. If you are unsure how to do your first contributions, please check out the [contrinuting](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md) file that lays out exactly how to get involved in open source.
+The incentive to start this project was out of a desire to learn more about good front-end desire and accessiblity, but also as part of the 2020 [Hacktoberfest]() initiative. This is an open source project that accepts anyone and everyone who is willing to help out. If you are unsure how to do your first contributions, please check out the [contributing](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md) file that lays out exactly how to get involved in open source.
 
 Also please check out the [Code of Conduct](https://github.com/tkshill/Quarto/blob/main/CODE_OF_CONDUCT.md). This repo will serve as a learning experience not only in functional programming and UI design, but also in good community interactions. As much as possible, all contributors should feel safe, respected, and appreciated for their efforts.
 
@@ -57,7 +57,23 @@ This project is set to be ready for contributions by October 1st, 2020. Until th
 
 # Run and Install
 
-Coming Soon!
+1. If you don't have it already, download and install [NODE.js](https://nodejs.org/en/download/)
+2. Download and install [Elm](https://guide.elm-lang.org/install/elm.html)
+3. Install [elm-spa](https://www.elm-spa.dev) via npm:
+```
+npm install -g elm-spa@latest
+```
+4. Fork this repo
+5. Create a local copy on your machine
+6. In your local shell/command line, navigate to the Quarto/Quarto file in the repository
+7. Run the live development server with:
+```
+npm start
+```
+8. Navigate to the localhost port indicated by the server. (Default should be localhost:8000)
+
+
+A more in-depth guide can be found in the [CONTRIBUTING](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md)
 
 # Tech Stack (proposed)
 
