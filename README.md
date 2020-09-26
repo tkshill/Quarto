@@ -62,7 +62,7 @@ From Wikipedia, the free encyclopedia -
 
 You can think of it as tic tac toe for adults. It's honestly a brilliant game that strikes just the right balance of strategy but also fun and ease of pickup. 
 
-## Affiliations
+**Affiliations**
 
 This app has no affiliation with the official Quarto game, and will never *ever* become any sort've profit-seeking venture based on the Quarto IP. This is strictly for educational and entertainment purposes. If you wish to purchase the official game (we high recommend it), you can do so [here](https://en.gigamic.com/game/quarto-classic) at the official Gigamic website.
 
@@ -72,7 +72,7 @@ The incentive to start this project was out of a desire to learn more about good
 
 Also please check out the [Code of Conduct](https://github.com/tkshill/Quarto/blob/main/CODE_OF_CONDUCT.md). This repo will serve as a learning experience not only in functional programming and UI design, but also in good community interactions. As much as possible, all contributors should feel safe, respected, and appreciated for their efforts.
 
-## Warning about contributions before October 1st
+**Warning about contributions before October 1st**
 
 This project is set to be ready for contributions by October 1st, 2020. Until that time, projects code, folders, available issues and many of the static files (including this README) may change. Contributors aren't necessarily discouraged from contributing during this setup stage, but we ask contributors create an [issue]() first, before attempting [pull requests] so the project maintainers can advise on the best course of action. 
 
