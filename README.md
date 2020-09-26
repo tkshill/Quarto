@@ -18,7 +18,7 @@ This is a small open source project to create a functional, _accessible_ web app
 - [What is Quarto](https://github.com/tkshill/Quarto/blob/main/README.md#what-is-quarto)
 - [Run and Install](https://github.com/tkshill/Quarto/blob/main/README.md#run-and-install)
 - [Contributing and Code of Conduct](https://github.com/tkshill/Quarto/blob/main/README.md#contributing-and-code-of-conduct)
-- [Tech Stack](https://github.com/tkshill/Quarto/blob/main/README.md#tech-stack)
+- [Tech Stack](https://github.com/tkshill/Quarto/blob/main/README.md#tech-stack-(proposed))
 - [Contact](https://github.com/tkshill/Quarto/blob/main/README.md#contact)
 - [License](https://github.com/tkshill/Quarto/blob/main/README.md#license)
 
