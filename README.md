@@ -86,7 +86,7 @@ npm install -g elm-spa@latest
 ```
 4. Fork this repo
 5. Create a local copy on your machine
-6. In your local shell/command line, navigate to the Quarto/Quarto file in the repository
+6. In a shell terminal/command line, navigate to the Quarto folder in the repository
 7. Run the live development server with:
 ```
 npm start
