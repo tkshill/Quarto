@@ -66,7 +66,7 @@ You can think of it as tic tac toe for adults. It's honestly a brilliant game th
 
 **Affiliations**
 
-This app has no affiliation with the official Quarto game, and will never *ever* become any sort've profit-seeking venture based on the Quarto IP. This is strictly for educational and entertainment purposes. If you wish to purchase the official game (we high recommend it), you can do so [here](https://en.gigamic.com/game/quarto-classic) at the official Gigamic website.
+This app has no affiliation with the official Quarto game, and will never *ever* become any sort've profit-seeking venture based on the Quarto IP. This is strictly for educational and entertainment purposes. If you wish to purchase the official game (we highly recommend it), you can do so [here](https://en.gigamic.com/game/quarto-classic) at the official Gigamic website.
 
 # Contributing and Code of Conduct
 
