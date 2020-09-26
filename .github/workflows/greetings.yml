@@ -10,4 +10,4 @@ jobs:
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         issue-message: 'Thank you so much for submitting an issue! Expect some proper feedback on your contribution in the next few days.'
-        pr-message: 'Thank you so much for submitting a pull request! Expect some proper feedback on your contribution in the next few days'
+        pr-message: 'Thank you for submitting a pull request! Expect some proper feedback on your contribution in the next few days'
