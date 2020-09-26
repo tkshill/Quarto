@@ -68,11 +68,9 @@ You can think of it as tic tac toe for adults. It's honestly a brilliant game th
 
 This app has no affiliation with the official Quarto game, and will never *ever* become any sort've profit-seeking venture based on the Quarto IP. This is strictly for educational and entertainment purposes. If you wish to purchase the official game (we highly recommend it), you can do so [here](https://en.gigamic.com/game/quarto-classic) at the official Gigamic website.
 
-# Contributing and Code of Conduct
+# Contributing
 
 The incentive to start this project was out of a desire to learn more about good front-end desire and accessiblity, but also as part of the 2020 [Hacktoberfest]() initiative. This is an open source project that accepts anyone and everyone who is willing to help out. If you are unsure how to do your first contributions, please check out the [contributing](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md) file that lays out exactly how to get involved in open source.
-
-Also please check out the [Code of Conduct](https://github.com/tkshill/Quarto/blob/main/CODE_OF_CONDUCT.md). This repo will serve as a learning experience not only in functional programming and UI design, but also in good community interactions. As much as possible, all contributors should feel safe, respected, and appreciated for their efforts.
 
 **Warning about contributions before October 1st**
 
@@ -95,8 +93,11 @@ npm start
 ```
 8. Navigate to the localhost port indicated by the server. (Default should be localhost:8000)
 
-
 A more in-depth guide can be found in the [CONTRIBUTING](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md)
+
+# Code of Conduct
+
+This is an inclusive space for education, learning and healthy communication. We ask that before you engage with the repository, please check out the [Code of Conduct](https://github.com/tkshill/Quarto/blob/main/CODE_OF_CONDUCT.md). This repo will serve as a learning experience not only in functional programming and UI design, but also in good community interactions. As much as possible, all contributors should feel safe, respected, and appreciated for their efforts.
 
 # Tech Stack (proposed)
 
