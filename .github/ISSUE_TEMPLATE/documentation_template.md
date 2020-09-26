@@ -1,6 +1,6 @@
 ---
-name: General Issue
-about: Template for good issues
+name: Documentation Issue
+about: Template for issues concerning community docs, api docs, guides, etc
 title: "[SHORT DESCRIPTION OF ISSUE]"
 labels: "Type: Documentation"
 assignees: ''
