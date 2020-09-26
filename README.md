@@ -1,3 +1,6 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/6a79a059-b229-42cf-9ac3-4f565129f538/deploy-status)](https://app.netlify.com/sites/peaceful-heisenberg-96c15b/deploys)
+---
+
 # Welcome to Quarto!
 
 Hey, thanks for stopping by.
