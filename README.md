@@ -13,6 +13,8 @@ Hey, thanks for stopping by.
 
 This is a small open source project to create a functional, _accessible_ web app based on the popular (and highly entertaining) board game [Quarto](https://en.wikipedia.org/wiki/Quarto_(board_game)).
 
+Check out the live [Demo](https://elmquarto.netlify.app)!
+
 # Table of Contents
 - [Project Goals](https://github.com/tkshill/Quarto/blob/main/README.md#project-goals)
 - [What is Quarto](https://github.com/tkshill/Quarto/blob/main/README.md#what-is-quarto)
