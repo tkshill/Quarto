@@ -1,4 +1,10 @@
+![Help Wanted](https://img.shields.io/badge/%20-help--wanted-%23159818)
+![MIT License](https://img.shields.io/github/license/tkshill/Quarto)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/6a79a059-b229-42cf-9ac3-4f565129f538/deploy-status)](https://app.netlify.com/sites/peaceful-heisenberg-96c15b/deploys)
+![Contributors](https://img.shields.io/github/contributors/tkshill/Quarto)
+![Open Issues](https://img.shields.io/github/issues-raw/tkshill/Quarto)
+![Virtual Coffee](https://img.shields.io/badge/Virtual-Coffee-red)
+![Hacktoberfest](https://img.shields.io/github/hacktoberfest/2020/tkshill/Quarto?color=orange)
 ---
 
 # Welcome to Quarto!
@@ -19,6 +25,18 @@ This is a small open source project to create a functional, _accessible_ web app
 # Project Goals
 
 The plan is to create both a single player and multiplayer [Progressive Web App](https://www.howtogeek.com/342121/what-are-progressive-web-apps/) representation of the game. The front elm will be primarily designed using the [Elm](https://elm-lang.org) programming language, with the backend handled using Google [Firebase](https://firebase.google.com). All the code will be freely available for use and reuse where possible.
+
+This will likely be a long running project, with many software themes explored. Some of the concepts we hope to cover are:
+- Functional Programming techniques
+- Domain driven design and advanced domain modelling
+- Progressive Web Apps
+- 3D graphics and design
+- Animations in the browser
+- Machine learning
+- API design
+- Working with Google Firebase
+
+If any of that sounds interesting, don't hesistate to take a look at one of our [issues](https://github.com/tkshill/Quarto/issues) and dive in.
 
 For more details on Project Goals, please check out the Quarto [Github Project](https://github.com/tkshill/Quarto/projects/2) where tasks, thoughts, bugs, and features are tracked.
 
