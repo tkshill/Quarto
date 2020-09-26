@@ -38,4 +38,4 @@ Add a `netlify.toml` file next to this README, for standard SPA routing:
  
 __Build command:__ `npm run build`
 
-__Publish directory:__ `public`
+__Publish directory:__ `Quarto/public`
