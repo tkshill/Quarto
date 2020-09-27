@@ -18,7 +18,7 @@ Check out the live [Demo](https://elmquarto.netlify.app)!
 # Table of Contents
 - [Project Goals](https://github.com/tkshill/Quarto/blob/main/README.md#project-goals)
 - [What is Quarto](https://github.com/tkshill/Quarto/blob/main/README.md#what-is-quarto)
-- [Hacktoberfest](https://github.com/tkshill/Quarto/blob/main/README.md#hacktoberfest!)
+- [Hacktoberfest](https://github.com/tkshill/Quarto/blob/main/README.md#hacktoberfest)
 - [Run and Install](https://github.com/tkshill/Quarto/blob/main/README.md#run-and-install)
 - [Contributing and Code of Conduct](https://github.com/tkshill/Quarto/blob/main/README.md#contributing-and-code-of-conduct)
 - [Tech Stack](https://github.com/tkshill/Quarto/blob/main/README.md#tech-stack-proposed)
