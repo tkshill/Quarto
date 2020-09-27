@@ -76,7 +76,7 @@ This project is part of the 2020 [Hacktoberfest](https://hacktoberfest.digitaloc
 A few key points on what this means:
 - Some issues will be given the `Hacktoberfest` label, meaning that we are making them available to be tackled during the month of October onwards
 - **For the month of October, anyone who wants to contribute can ask to pair on an issue, and the maintainers will schedule a 60-90 minute session where we walk you through getting set up, working through the issue, and submitting a PR.**
-- The label `good first issue` has been included on some issues. **Those issues will be assigned exclusively for new developers/people with limited github/git/OSS experience
+- The label `good first issue` has been included on some issues. **Those issues will be assigned exclusively for new developers/people with limited github/git/OSS experience**
 - Please ask questions about anything you are confused about. We've made some issue templates to help guide people on how to structure their questions and concerns, but feel free to express yourself, as long as it's in a kind and conscientious manner.
 
 # Contributing
