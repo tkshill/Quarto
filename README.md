@@ -71,7 +71,7 @@ This app has no affiliation with the official Quarto game, and will never *ever*
 
 # Hacktoberfest!
 
-This project is part of the 2020 [Hacktoberfest]() initiative, designed to get more developers, especially newbies, involved in open source projects and remote contributions.
+This project is part of the 2020 [Hacktoberfest](https://hacktoberfest.digitalocean.com) initiative, designed to get more developers, especially newbies, involved in open source projects and remote contributions.
 
 A few key points on what this means:
 - Some issues will be given the `Hacktoberfest` label, meaning that we are making them available to be tackled during the month of October onwards
