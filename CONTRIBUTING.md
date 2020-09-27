@@ -18,6 +18,7 @@ We really want to make it as easy as possible for newbies to start helping out a
 - [The Basics](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#the-basics)
   - [Making a Github Account](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#making-a-github-account)
   - [Working with Issues](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#working-with-issues)
+  - [Install and Run](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#run-and-install)
   - [Making Pull Requests](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#creating-a-pull-request)
   - [Awaiting Review](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#awaiting-review)
   - [Tips and Gotchas](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#tips-and-gotchas)
@@ -57,6 +58,22 @@ If you feel like there's a contribution you would like to make that isn't repres
  - DOCUMENTATION
 
 The meanings for those are hopefully pretty self explanatory. If you feel like you have an issue that doesnt match those categories though, go ahead and ignore the templates and create an issue the old fashioned way.
+
+## Run and Install
+
+1. If you don't have it already, download and install [NODE.js](https://nodejs.org/en/download/)
+2. Download and install [Elm](https://guide.elm-lang.org/install/elm.html)
+3. Install [elm-spa](https://www.elm-spa.dev) via npm:
+```
+npm install -g elm-spa@latest
+```
+4. Fork this repo
+5. Create a local copy on your machine
+6. In a shell terminal/command line, navigate to the Quarto folder in the repository
+7. Run the live development server with:
+```
+npm start
+```
 
 ## Creating a Pull Request
 At this point, you have two options.
