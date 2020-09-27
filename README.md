@@ -18,6 +18,7 @@ Check out the live [Demo](https://elmquarto.netlify.app)!
 # Table of Contents
 - [Project Goals](https://github.com/tkshill/Quarto/blob/main/README.md#project-goals)
 - [What is Quarto](https://github.com/tkshill/Quarto/blob/main/README.md#what-is-quarto)
+- [Hacktoberfest](https://github.com/tkshill/Quarto/blob/main/README.md#hacktoberfest!)
 - [Run and Install](https://github.com/tkshill/Quarto/blob/main/README.md#run-and-install)
 - [Contributing and Code of Conduct](https://github.com/tkshill/Quarto/blob/main/README.md#contributing-and-code-of-conduct)
 - [Tech Stack](https://github.com/tkshill/Quarto/blob/main/README.md#tech-stack-proposed)
@@ -67,6 +68,16 @@ You can think of it as tic tac toe for adults. It's honestly a brilliant game th
 **Affiliations**
 
 This app has no affiliation with the official Quarto game, and will never *ever* become any sort've profit-seeking venture based on the Quarto IP. This is strictly for educational and entertainment purposes. If you wish to purchase the official game (we highly recommend it), you can do so [here](https://en.gigamic.com/game/quarto-classic) at the official Gigamic website.
+
+# Hacktoberfest!
+
+This project is part of the 2020 [Hacktoberfest]() initiative, designed to get more developers, especially newbies, involved in open source projects and remote contributions.
+
+A few key points on what this means:
+- Some issues will be given the `Hacktoberfest` label, meaning that we are making them available to be tackled during the month of October onwards
+- **For the month of October, anyone who wants to contribute can ask to pair on an issue, and the maintainers will schedule a 60-90 minute session where we walk you through getting set up, working through the issue, and submitting a PR.**
+- The label `good first issue` has been included on some issues. **Those issues will be assigned exclusively for new developers/people with limited github/git/OSS experience
+- Please ask questions about anything you are confused about. We've made some issue templates to help guide people on how to structure their questions and concerns, but feel free to express yourself, as long as it's in a kind and conscientious manner.
 
 # Contributing
 
