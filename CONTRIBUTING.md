@@ -16,7 +16,15 @@ We really want to make it as easy as possible for newbies to start helping out a
 - [Introduction](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#introduction)
 - [What type of contributions are desired](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#what-type-of-contributions-are-desired)
 - [The Basics](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#the-basics)
-- 
+  - [Making a Github Account](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#making-a-github-account)
+  - [Working with Issues](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#working-with-issues)
+  - [Making Pull Requests](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#creating-a-pull-request)
+  - [Awaiting Review](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#awaiting-review)
+  - [Tips and Gotchas](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#tips-and-gotchas)
+- [Bug Reporting](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#reporting-a-bug)
+- [Preffered code style](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#preferred-code-style)
+- [Commit message conventions](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#commit-message-conventions)
+- [Labelling conventions](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#labelling-conventions)
 
 # What type of contributions we're looking for.
 
@@ -24,23 +32,33 @@ This is an open source project and we love to receive contributions from our com
 from writing tutorials or blog posts, improving the documentation, submitting bug reports and feature requests,
 or writing code which can be incorporated into the application codebase itself.
 
+# Asking to Pair
+
+This is a beginner friendly repo. Contributors can request a pairing (zoom/google hangouts) to pair with a maintainer on tackling an issue/submitting a PR/etc. If you want to do it for a pre-existing issue, simple indicate so in a comment under that issue. If not, you may open a new Question issue and request a pairing.
+
 # The Basics
 
-## Step 1. Setting up a Github Account
+## Setting up a Github Account
 
 We're going to assume you know what [github](https://www.howtogeek.com/180167/htg-explains-what-is-github-and-what-do-geeks-use-it-for/) is about and how it works (otherwise, how would you be reading this?)
 
 If you haven't made a github account as yet, make one [now](https://github.com). It's free!
 
-## Step 2. Find/Make An Issue
+## Working With Issues
 
 Github uses a feature called _issues_. Issues are essentially a way to highlight bugs, features, problems, or any sort of suggestion or action you wish to happen on a github hosted project (you can find a more comprehensive explanation [here](https://guides.github.com/features/issues/)).
 
 We highly recommend looking at the existing reository issues to find a good open issue to start with. We always try to keep them populated with some beginner friendly issues that anyone can attempt to solve. We also use a `PR Submitted` tag to indicate when an Pull Request has been submitted for an issue, but it hasn't yet been merged, as most people would rather would on an issue with no attempted PRs yet.
 
-If you feel like there's a contribution you would like to make that isn't represented by an already existing issue, feel free to create your own!
+If you feel like there's a contribution you would like to make that isn't represented by an already existing issue, feel free to create your own! We have four issue templates that you can use which provide some (hopefully) helpful guidelines on how to form your issues. They are:
+ - FEATURE
+ - BUG
+ - QUESTION
+ - DOCUMENTATION
 
-## Step 3. Creating a PR
+The meanings for those are hopefully pretty self explanatory. If you feel like you have an issue that doesnt match those categories though, go ahead and ignore the templates and create an issue the old fashioned way.
+
+## Creating a Pull Request
 At this point, you have two options.
 
 **The first option** is using the github interface to fork the repo, making an edit right here in the github client, and then submit a Pull Request (no code or terminals or IDE required). [This guide](https://guides.github.com/activities/hello-world/) shows just how to do that for a small personal repo. You would simply replace the step of creating a new repository to just navigating to this one and forking that instead. This is a great idea if you simply plan to add to or edit one of the markdown files we use for documentation in this project.
@@ -49,13 +67,13 @@ At this point, you have two options.
 
 **Note:** The guide referenced above uses _master_ as the naming convention for the default branch in all its repos. In this project, _main_ is the default branch name. When following the instructions in the guide, simply replace _master_ with _main_ wherever it appears and it should proceed as normal. [this guide](https://www.hanselman.com/blog/EasilyRenameYourGitDefaultBranchFromMasterToMain.aspx) can help you transition with your own personal repos from master to main, and explains the methodology as to why you should.
 
-## Step 4. Awaiting Review
+## Awaiting Review
 
-Once you've submitted your pull request, the only thing left is to wait from feedback from one of the project maintainers. Since this is volunteer work for all of course, we ask for patience if you don't see a response immediately. Sometimes it takes about a day for someone's schedule to clear up to have the sit to properly review incoming PRs. We'd rather not rush a response after someone has put time and effort into submitted. If it's been over 24 hours and you haven't received any acknowledgement, you can post a message in the **#open-souce** channel in the slack reminded of your PR, and someone will get back to you.
+Once you've submitted your pull request, the only thing left is to wait from feedback from one of the project maintainers. Since this is volunteer work for all of course, we ask for patience if you don't see a response immediately. Sometimes it takes about a day for someone's schedule to clear up to have the sit to properly review incoming PRs. We'd rather not rush a response after someone has put time and effort into submitted. If it's been over **one week** and you haven't received any acknowledgement, you can post a comment on your PR reminding of it's status. If **two weeks** have passed with no feedback, you can email the project maintainer at kirk.shilling@gmail.com.
 
 If the PR looks good, a maintainer will typically give feedback and merge the request immediately, otherwise they'll let you know what questions they have or what needs to change before your work can be accepted. Once it is, you'll see your changes on the main branch and VOILA, open source contribution complete!
 
-## Step 5. Tips, Tricks and Gotchas
+## Tips and Gotchas
 
 This section is just little notes and bits of info that can smooth over some of the bumps and hiccups that can come along with contributiong.
 
@@ -67,9 +85,9 @@ That's all for now. If you feel like anything is missing from this document that
 
 
 # Reporting a bug
-If you find a security vulnerability, do NOT open an issue. Email kirk.shilling@gmail.com instead.
+If you find a **critical security vulnerability**, do NOT open an issue. Email kirk.shilling@gmail.com instead. This app does not now, nor does it have plans to store critical personal info, so any such leak should come from third party integrations, and remains highly unlikely, but you never know.
 
-We have a bug report template already created for your use. Just select when opening up an issue on github
+For any other bug, we have a bug report template already created for your use. Just select it when opening up an issue on github and follow the headers to formulating your issue.
 
 When filing an issue, make sure to answer these three questions:
 
@@ -77,27 +95,10 @@ When filing an issue, make sure to answer these three questions:
 - What did you expect to see?
 - What did you see instead?
 
-# Requesting a feature
-
-If you find yourself wishing for a feature you are probably not alone. There are bound to be others out there with similar needs. 
-Open an issue on our issues list on GitHub which describes the feature you would like to see, why you need it, and how it should work.
-
-# Suggestions and Questions
-
-# Code review process
-
-The core team looks at Pull Requests on a weekly basis.
-After feedback has been given we expect responses within two weeks. After two weeks we may close the pull request if it isn't showing any activity.
-
-# Community
-
-All community discussions are currently done via issues.
-
 # Preferred Code style
 
-1. Please use abbreviations for object names sparingly
-2. [Elm-format](https://github.com/avh4/elm-format)
-3. ...
+1. Please use abbreviations for object names sparingly. Full names are fine. 
+2. We highly encourage you to integrate [Elm-format](https://github.com/avh4/elm-format) with your IDE but you don't have to.
 
 # Commit message conventions
 
@@ -106,9 +107,12 @@ Common types are:
 - DOCS: - Creating of new documents
 - FIX: - Bug fixes
 - EDIT: - Usually a follow up commit if a small error was spotted in a previous version
-- REFACTOR: 
-- FEATURE:
+- REFACTOR: - Changing code structure without changing code functionality
+- FEATURE: - Adding new functionality
 
 # Labelling Conventions
 
-Coming soon!
+This repository has three basic types of labels:
+- `Type` - The nature of the issue. BUG, FEATURE, QUESTION, or DOCUMENTATION (will be pre-assigned if using issue templates). Only one active per issue
+- `Status` - What part of the process is this issue in. e.g. Active, Needs Review, Resolved, etc. (will be filled in by maintainers and some contributors). Only one active per issue.
+- `Context` - Additional info that helps people parse issues. e.g. "good first issue", "for maintainer only". Multiple may be active on one issue.
