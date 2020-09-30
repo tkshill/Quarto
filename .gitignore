@@ -7,3 +7,4 @@ src/Spa/Generated
 # MacOS weird stuff
 .DS_Store
 node_modules
+.DS_Store

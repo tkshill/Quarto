@@ -10,6 +10,7 @@ module Shared exposing
 
 import Browser.Navigation exposing (Key)
 import Element exposing (..)
+import Element.Background as Background
 import Element.Font as Font
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
@@ -68,12 +69,12 @@ view :
 view { page, toMsg } model =
     { title = page.title
     , body =
-        [ column [ padding 20, spacing 20, height fill ]
-            [ row [ spacing 20 ]
-                [ link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.Top, label = text "Homepage" }
-                , link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.NotFound, label = text "Not found" }
+        [ column [ spacing 20, height fill, width fill ]
+            [ row [ width fill, spacing 20, padding 20, Background.color (rgb255 52 42 31) ]
+                [ link [ Font.color (rgb255 255 255 255) ] { url = Route.toString Route.Top, label = text "Homepage" }
+                , link [ Font.color (rgb255 255 255 255) ] { url = Route.toString Route.Quarto, label = text "Game" }
                 ]
-            , column [ height fill ] page.body
+            , column [ height fill, centerX ] page.body
             ]
         ]
     }
