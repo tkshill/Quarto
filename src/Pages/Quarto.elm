@@ -1,6 +1,6 @@
 module Pages.Quarto exposing (Model, Msg, Params, page)
 
-import Element exposing (Element, rgb255)
+import Element exposing (Element)
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
@@ -8,6 +8,7 @@ import List.Extra as Liste
 import Spa.Document exposing (Document)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
+import Styles
 import Svg exposing (Svg, svg)
 import Svg.Attributes as Attr
 
@@ -372,7 +373,7 @@ viewCell ( name, status ) =
 
 viewCellButton : Cell -> Element Msg
 viewCellButton cell =
-    Input.button [ Border.color (rgb255 52 42 31), Border.width 5 ] { onPress = Just (PlaceAttempt cell), label = viewCell cell }
+    Input.button [ Border.color Styles.black, Border.width 5 ] { onPress = Just (PlaceAttempt cell), label = viewCell cell }
 
 
 viewBoard : CellBoard -> Element Msg
@@ -430,10 +431,14 @@ colourfunc : Colour -> List (Svg.Attribute msg)
 colourfunc colour =
     case colour of
         Black ->
-            [ Attr.color "#CAB8CB" ]
+            [ Styles.colortoCssRGBString Styles.red
+                |> Attr.color
+            ]
 
         White ->
-            [ Attr.color "#DCB69F" ]
+            [ Styles.colortoCssRGBString Styles.yellow
+                |> Attr.color
+            ]
 
 
 patternfunc : Pattern -> List (Svg.Attribute msg)

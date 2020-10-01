@@ -14,6 +14,7 @@ import Element.Background as Background
 import Element.Font as Font
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
+import Styles
 import Url exposing (Url)
 
 
@@ -70,9 +71,9 @@ view { page, toMsg } model =
     { title = page.title
     , body =
         [ column [ spacing 20, height fill, width fill ]
-            [ row [ width fill, spacing 20, padding 20, Background.color (rgb255 52 42 31) ]
-                [ link [ Font.color (rgb255 255 255 255) ] { url = Route.toString Route.Top, label = text "Homepage" }
-                , link [ Font.color (rgb255 255 255 255) ] { url = Route.toString Route.Quarto, label = text "Game" }
+            [ row [ width fill, spacing 20, padding 20, Background.color Styles.blue ]
+                [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Homepage" }
+                , link [ Font.color Styles.white ] { url = Route.toString Route.Quarto, label = text "Game" }
                 ]
             , column [ height fill, centerX ] page.body
             ]
