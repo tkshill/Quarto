@@ -7,6 +7,7 @@ import Element.Font as Font
 import Element.Input as Input
 import List.Extra as Liste
 import Pages.NotFound exposing (Msg)
+import Set
 import Spa.Document exposing (Document)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url exposing (Url)
@@ -378,10 +379,21 @@ updateGamepiecePlaced ( cellname, cellstatus ) model =
                         newBoard =
                             updateCellBoard cellname gamepiece model.board
 
+                        win =
+                            isWin newBoard
+
                         remainingPieces =
                             updatePiecesRemaining gamepiece model.remainingPieces
                     in
-                    { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = ActiveGame player Nothing }
+                    case ( win, remainingPieces ) of
+                        ( True, _ ) ->
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameOver (GameWon player) }
+
+                        ( _, [] ) ->
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameOver Draw }
+
+                        _ ->
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = ActiveGame player Nothing }
 
 
 updateSelectingGamepiece : Gamepiece -> Model -> Model
@@ -466,6 +478,53 @@ updateCellBoard name piece board =
 updatePiecesRemaining : Gamepiece -> List Gamepiece -> List Gamepiece
 updatePiecesRemaining piece remainingPieces =
     List.filter ((/=) piece) remainingPieces
+
+
+boardToWinnableCells : CellBoard -> List (List Cell)
+boardToWinnableCells board =
+    [ [ board.a1, board.a2, board.a3, board.a4 ] -- column A
+    , [ board.b1, board.b2, board.b3, board.b4 ] -- column B
+    , [ board.c1, board.c2, board.c3, board.c4 ] -- column C
+    , [ board.d1, board.d2, board.d3, board.d4 ] -- column D
+    , [ board.a1, board.b1, board.c1, board.d1 ] -- row 1
+    , [ board.a2, board.b2, board.c2, board.d2 ] -- row 2
+    , [ board.a3, board.b3, board.c3, board.d3 ] -- row 3
+    , [ board.a4, board.b4, board.c4, board.d4 ] -- row 4
+    , [ board.a1, board.b2, board.c3, board.d4 ] -- back slash diagonal
+    , [ board.a4, board.b3, board.c2, board.d1 ] -- forward slash diagonal
+    ]
+
+
+matchingDimensions : List Cell -> Bool
+matchingDimensions cells =
+    cells
+        -- strip cell names
+        |> List.map (\( _, cellstatus ) -> cellstatus)
+        -- filter out cells that dont have gamepieces in them
+        |> List.filterMap identity
+        -- convert from list of game pieces to sets of strings
+        |> List.map (gamepieceToList >> Set.fromList)
+        -- interset the sets to make one set of common values
+        |> Liste.foldl1 Set.intersect
+        -- convert from Maybe set to set
+        |> Maybe.withDefault Set.empty
+        -- return True is set isn't empty, false if it is
+        |> not
+        << Set.isEmpty
+
+
+isWin : CellBoard -> Bool
+isWin board =
+    board
+        -- turn  a board to list of lists of game winning cells
+        |> boardToWinnableCells
+        -- turn to list of booleans on if cells have matches
+        |> List.map matchingDimensions
+        -- filter out false values
+        |> List.filter identity
+        -- if any values remain, return  bool
+        |> not
+        << List.isEmpty
 
 
 
@@ -553,10 +612,10 @@ viewRestartButton =
 viewBoard : CellBoard -> Element Msg
 viewBoard cellboard =
     column [ centerX ]
-        [ row [] <| List.map viewCellButton [ cellboard.a1, cellboard.a2, cellboard.a3, cellboard.a4 ]
-        , row [] <| List.map viewCellButton [ cellboard.b1, cellboard.b2, cellboard.b3, cellboard.b4 ]
-        , row [] <| List.map viewCellButton [ cellboard.c1, cellboard.c2, cellboard.c3, cellboard.c4 ]
-        , row [] <| List.map viewCellButton [ cellboard.d1, cellboard.d2, cellboard.d3, cellboard.d4 ]
+        [ row [] <| List.map viewCellButton [ cellboard.a1, cellboard.b1, cellboard.c1, cellboard.d1 ]
+        , row [] <| List.map viewCellButton [ cellboard.a2, cellboard.b2, cellboard.c2, cellboard.d2 ]
+        , row [] <| List.map viewCellButton [ cellboard.a3, cellboard.b3, cellboard.c3, cellboard.d3 ]
+        , row [] <| List.map viewCellButton [ cellboard.a4, cellboard.b4, cellboard.c4, cellboard.d4 ]
         ]
 
 
