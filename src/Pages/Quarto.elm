@@ -1,4 +1,15 @@
-module Pages.Quarto exposing (Model, Msg, Params, page)
+module Pages.Quarto exposing
+    ( Colour(..)
+    , Gamepiece
+    , Model
+    , Msg
+    , Params
+    , Pattern(..)
+    , Shape(..)
+    , Size(..)
+    , matchingDimensions
+    , page
+    )
 
 import Element exposing (Element, centerX, column, el, fill, row, spacing, text, width)
 import Element.Background as Background
@@ -493,15 +504,12 @@ boardToWinnableCells board =
     , [ board.a1, board.b2, board.c3, board.d4 ] -- back slash diagonal
     , [ board.a4, board.b3, board.c2, board.d1 ] -- forward slash diagonal
     ]
+        |> List.filter (\cells -> List.all (\( _, status ) -> status /= Nothing) cells)
 
 
-matchingDimensions : List Cell -> Bool
-matchingDimensions cells =
-    cells
-        -- strip cell names
-        |> List.map (\( _, cellstatus ) -> cellstatus)
-        -- filter out cells that dont have gamepieces in them
-        |> List.filterMap identity
+matchingDimensions : List Gamepiece -> Bool
+matchingDimensions gamepieces =
+    gamepieces
         -- convert from list of game pieces to sets of strings
         |> List.map (gamepieceToList >> Set.fromList)
         -- interset the sets to make one set of common values
@@ -518,6 +526,12 @@ isWin board =
     board
         -- turn  a board to list of lists of game winning cells
         |> boardToWinnableCells
+        -- strip cell names
+        |> List.map (List.map (\( _, cellstatus ) -> cellstatus))
+        -- convert cells to gamepieces and filter out cells that dont have gamepieces in them
+        |> List.map (List.filterMap identity)
+        -- filter out those that aren't filled in
+        |> List.filter (\x -> List.length x >= 4)
         -- turn to list of booleans on if cells have matches
         |> List.map matchingDimensions
         -- filter out false values
