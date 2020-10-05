@@ -29,4 +29,8 @@ I can see here in the documentation where you have the option of choosing layout
 Include anyone who may be relevant to the discussion
 ```
 
-#### styled after [article](https://medium.com/nyc-planning-digital/writing-a-proper-github-issue-97427d62a20f) written by Andy Cochran
+See [here](https://github.com/tkshill/Quarto/blob/main/README.md#run-and-install) in the read me for how to run and install the application.
+
+See [here](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#the-basics) in contributing for the basics on forking and cloning the repository.
+
+**Issue styled after [article](https://medium.com/nyc-planning-digital/writing-a-proper-github-issue-97427d62a20f) written by Andy Cochran**
