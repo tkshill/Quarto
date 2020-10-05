@@ -411,7 +411,10 @@ updateGamepiecePlaced ( cellname, cellstatus ) model =
 updateSelectingGamepiece : Gamepiece -> Model -> Model
 updateSelectingGamepiece gamepiece model =
     case model.gamestatus of
-        GameOver _ ->
+        GameWon _ ->
+            model
+
+        Draw ->
             model
 
         ActiveGame player _ ->
