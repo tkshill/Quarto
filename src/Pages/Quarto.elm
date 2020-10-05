@@ -282,12 +282,9 @@ type alias SelectedPiece =
 
 type Gamestatus
     = ActiveGame Activeplayer SelectedPiece
-    | GameOver EndStatus
-
-
-type EndStatus
-    = GameWon Player
+    | GameWon Player
     | Draw
+
 
 
 type alias Model =
@@ -374,7 +371,10 @@ update msg model =
 updateGamepiecePlaced : Cell -> Model -> Model
 updateGamepiecePlaced ( cellname, cellstatus ) model =
     case model.gamestatus of
-        GameOver _ ->
+        GameWon _ ->
+            model
+
+        Draw ->
             model
 
         ActiveGame player selectedPiece ->
@@ -398,10 +398,10 @@ updateGamepiecePlaced ( cellname, cellstatus ) model =
                     in
                     case ( win, remainingPieces ) of
                         ( True, _ ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameOver (GameWon player) }
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon player }
 
                         ( _, [] ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameOver Draw }
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = Draw }
 
                         _ ->
                             { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = ActiveGame player Nothing }
@@ -410,7 +410,10 @@ updateGamepiecePlaced ( cellname, cellstatus ) model =
 updateSelectingGamepiece : Gamepiece -> Model -> Model
 updateSelectingGamepiece gamepiece model =
     case model.gamestatus of
-        GameOver _ ->
+        GameWon _ ->
+            model
+
+        Draw ->
             model
 
         ActiveGame player _ ->
@@ -567,19 +570,17 @@ view model =
 viewGamestatus : Gamestatus -> Element Msg
 viewGamestatus gamestatus =
     case gamestatus of
-        GameOver endstatus ->
-            case endstatus of
-                GameWon player ->
-                    row []
-                        [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString player ]
-                        , viewRestartButton
-                        ]
+        GameWon player ->
+            row []
+                [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString player ]
+                , viewRestartButton
+                ]
 
-                Draw ->
-                    row []
-                        [ viewSvgbox [ Svg.text "It's a Draw" ]
-                        , viewRestartButton
-                        ]
+        Draw ->
+            row []
+                [ viewSvgbox [ Svg.text "It's a Draw" ]
+                , viewRestartButton
+                ]
 
         ActiveGame player selectedGamepiece ->
             case selectedGamepiece of
