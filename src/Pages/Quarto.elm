@@ -547,7 +547,7 @@ isWin board =
 
 view : Model -> Document Msg
 view model =
-    { title = "Game"
+    { title = "Quarto - Play"
     , body =
         [ column [ spacing 10, centerX ]
             [ el [ Font.center, width fill ] (text "Remaining Pieces")

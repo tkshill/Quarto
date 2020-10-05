@@ -31,7 +31,7 @@ page =
 
 view : Url Params -> Document Msg
 view { params } =
-    { title = "404"
+    { title = "404 - Page not found"
     , body =
         [ text "Page not found"
         ]
