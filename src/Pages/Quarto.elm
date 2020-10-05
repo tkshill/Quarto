@@ -375,7 +375,10 @@ update msg model =
 updateGamepiecePlaced : Cell -> Model -> Model
 updateGamepiecePlaced ( cellname, cellstatus ) model =
     case model.gamestatus of
-        GameOver _ ->
+        GameWon _ ->
+            model
+
+        Draw ->
             model
 
         ActiveGame player selectedPiece ->
