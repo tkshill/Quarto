@@ -286,10 +286,6 @@ type Gamestatus
     | Draw
 
 
-{- type EndStatus
-    = GameWon Player
-    | Draw -}
-
 
 type alias Model =
     { board : CellBoard
