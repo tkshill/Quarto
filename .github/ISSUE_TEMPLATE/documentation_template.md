@@ -34,4 +34,8 @@ Here's a screenshot of the error and how people can work through it.
 Include anyone who may be relevant to the discussion
 ```
 
+See [here](https://github.com/tkshill/Quarto/blob/main/README.md#run-and-install) in the read me for how to run and install the application.
+
+See [here](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#the-basics) in contributing for the basics on forking and cloning the repository.
+
 #### styled after [article](https://medium.com/nyc-planning-digital/writing-a-proper-github-issue-97427d62a20f) written by Andy Cochran
