@@ -26,3 +26,6 @@ A clear and concise description of any alternative solutions or features you've 
 ```
 Add any other context, links, or screenshots about the feature request here.
 ```
+See [here](https://github.com/tkshill/Quarto/blob/main/README.md#run-and-install) in the read me for how to run and install the application.
+
+See [here](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#the-basics) in contributing for the basics on forking and cloning the repository.
