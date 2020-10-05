@@ -51,7 +51,7 @@ But really, we genuinely like functional programming, and we love Elm, which we 
 ## How flexible are the project goals?
 
 We really want to open up user input as to the direction of certain aspects of project design and functionality, but some parts of the scope are unchanging. At this point, we can say with a fair amount of certainty:
-- Elm will be the promary development language for the front-end part of the application. The goal isn't to create a web game that happens to use elm. It's to create an Elm-based game. If you don't like Elm or don't want to contribute to an Elm project, we may explore other languages on the back end, and a little bit of javascript interop, but these will be few and far between
+- Elm will be the primary development language for the front-end part of the application. The goal isn't to create a web game that happens to use elm. It's to create an Elm-based game. If you don't like Elm or don't want to contribute to an Elm project, we may explore other languages on the back end, and a little bit of javascript interop, but these will be few and far between
 - Elm-UI will be the main styling framework utilized. Part of the goals for the maintainer are to use this project to get a greater understanding of Elm-UI, an opinionated layout and styling framework that takes a few key departures from traditional html and css. So this may not be the ideal project if you're looking to polish up your css styling
 - The end goal is a fully functional PWA with 3D graphics. Even if all the functionality isn't implemented from the start, it's a when, not an if.
 - No monetization of any part of this, ever.
