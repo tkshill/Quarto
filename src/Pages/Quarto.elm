@@ -402,10 +402,10 @@ updateGamepiecePlaced ( cellname, cellstatus ) model =
                     in
                     case ( win, remainingPieces ) of
                         ( True, _ ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameOver (GameWon player) }
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon player }
 
                         ( _, [] ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameOver Draw }
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = Draw }
 
                         _ ->
                             { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = ActiveGame player Nothing }
