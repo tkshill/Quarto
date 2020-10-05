@@ -571,19 +571,17 @@ view model =
 viewGamestatus : Gamestatus -> Element Msg
 viewGamestatus gamestatus =
     case gamestatus of
-        GameOver endstatus ->
-            case endstatus of
-                GameWon player ->
-                    row []
-                        [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString player ]
-                        , viewRestartButton
-                        ]
+        GameWon player ->
+            row []
+                [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString player ]
+                , viewRestartButton
+                ]
 
-                Draw ->
-                    row []
-                        [ viewSvgbox [ Svg.text "It's a Draw" ]
-                        , viewRestartButton
-                        ]
+        Draw ->
+            row []
+                [ viewSvgbox [ Svg.text "It's a Draw" ]
+                , viewRestartButton
+                ]
 
         ActiveGame player selectedGamepiece ->
             case selectedGamepiece of
