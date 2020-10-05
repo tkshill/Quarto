@@ -282,12 +282,13 @@ type alias SelectedPiece =
 
 type Gamestatus
     = ActiveGame Activeplayer SelectedPiece
-    | GameOver EndStatus
-
-
-type EndStatus
-    = GameWon Player
+    | GameWon Player
     | Draw
+
+
+{- type EndStatus
+    = GameWon Player
+    | Draw -}
 
 
 type alias Model =
