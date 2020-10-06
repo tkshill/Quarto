@@ -32,5 +32,5 @@ page =
 view : Url Params -> Document Msg
 view { params } =
     { title = "Homepage"
-    , body = [ text "Homepage" ]
+    , body = [el [centerX, centerY] <| text "Quarto"]
     }
