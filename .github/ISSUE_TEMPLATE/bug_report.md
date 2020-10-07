@@ -50,3 +50,7 @@ If applicable, add screenshots to help explain your problem.
 ```
 Add any other context about the problem here.
 ```
+
+See [here](https://github.com/tkshill/Quarto/blob/main/README.md#run-and-install) in the read me for how to run and install the application.
+
+See [here](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#the-basics) in contributing for the basics on forking and cloning the repository.

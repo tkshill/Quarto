@@ -27,7 +27,7 @@ Check out the live [Demo](https://elmquarto.netlify.app)!
 
 # Project Goals
 
-The plan is to create both a single player and multiplayer [Progressive Web App](https://www.howtogeek.com/342121/what-are-progressive-web-apps/) representation of the game. The front elm will be primarily designed using the [Elm](https://elm-lang.org) programming language, with the backend handled using Google [Firebase](https://firebase.google.com). All the code will be freely available for use and reuse where possible.
+The plan is to create both a single player and multiplayer [Progressive Web App](https://www.howtogeek.com/342121/what-are-progressive-web-apps/) representation of the game. The front elm will be primarily designed using the [Elm](https://elm-lang.org) programming language. All the code will be freely available for use and reuse where possible.
 
 This will likely be a long running project, with many software themes explored. Some of the concepts we hope to cover are:
 - Functional Programming techniques
@@ -37,7 +37,31 @@ This will likely be a long running project, with many software themes explored. 
 - Animations in the browser
 - Machine learning
 - API design
-- Working with Google Firebase
+
+## Why not a library/package like other OSS projects
+
+This repository seeks to address the lack of beginner resources on project management and tooling in the programming community. There are many language tutorials and articles highlighting coding styles and techniques, but a dearth of full fledged applications that are parsable for new and junior developers, and fewer still that are geared toward learning how to build end to end applications. Every part of the development of this project will be kept public and avaialable and everyone and anyone are encouraged to be a part of its development. For the better part of a year ideally, this will exist as a living example of a elm based project, and follow as closely as possible modern, professional design and deployment techniques for web applications.
+
+## Why Elm?
+
+We like Elm. A lot. We're kind of obsessed.
+
+But really, we genuinely like functional programming, and we love Elm, which we feel to be an accessible way to learn and develop robust software with functional programming. The maintainers are dedicated to making Elm accessible for anyone who wants to learn (a value echoed by the greater elm programming community at large) and we are will to pair with anyone who wishes to use this codebase as an introduction to use the language on a real project.
+
+## How flexible are the project goals?
+
+We really want to open up user input as to the direction of certain aspects of project design and functionality, but some parts of the scope are unchanging. At this point, we can say with a fair amount of certainty:
+- Elm will be the primary development language for the front-end part of the application. The goal isn't to create a web game that happens to use elm. It's to create an Elm-based game. If you don't like Elm or don't want to contribute to an Elm project, we may explore other languages on the back end, and a little bit of javascript interop, but these will be few and far between
+- Elm-UI will be the main styling framework utilized. Part of the goals for the maintainer are to use this project to get a greater understanding of Elm-UI, an opinionated layout and styling framework that takes a few key departures from traditional html and css. So this may not be the ideal project if you're looking to polish up your css styling
+- The end goal is a fully functional PWA with 3D graphics. Even if all the functionality isn't implemented from the start, it's a when, not an if.
+- No monetization of any part of this, ever.
+
+We feel like this is the bare minimum that allows the maintainers to realize the project goals and also provides some stability for the people who wish to contribute. However, this still leaves a lot of things we are flexible on (and actively encourage contributions in)
+- Design: The visuals of the project are completely up in the air. The only restricition is that whatever designs are chosen meet a high standard of accessibility.
+- Business logic: We try to do good, functional design here but are interested to see the techniques people come up with for certain solutions.
+- Build tools/pipeline: Currently, we're using netlify, and to be honest, it's far and above meeting our requirements, but there's still a lot more that could be done with things like github actions, and other CI/CD tooling and we're happy to get advice on that front.
+- Tests, tests, tests: Unit, integration, end-to-end and user testing are all desperactely needed
+- Documentation: We like docs. We need docs. We need up to date docs.
 
 If any of that sounds interesting, don't hesistate to take a look at one of our [issues](https://github.com/tkshill/Quarto/issues) and dive in.
 
@@ -110,13 +134,11 @@ A more in-depth guide can be found in the [CONTRIBUTING](https://github.com/tksh
 
 This is an inclusive space for education, learning and healthy communication. We ask that before you engage with the repository, please check out the [Code of Conduct](https://github.com/tkshill/Quarto/blob/main/CODE_OF_CONDUCT.md). This repo will serve as a learning experience not only in functional programming and UI design, but also in good community interactions. As much as possible, all contributors should feel safe, respected, and appreciated for their efforts.
 
-# Tech Stack (proposed)
+# Tech Stack (current)
 
 - [Elm v 0.19.x](https://guide.elm-lang.org) as the front-end language of choice
 - [Elm-spa](https://www.elm-spa.dev) as a single page app framework for use with the Elm language
 - [Elm-UI](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/) for content and layout framework
-- [tota11y](https://khan.github.io/tota11y/#Try-it) as an accessibility visualization toolkit
-- [Firebase](https://firebase.google.com) as the mobile backend as a service
 - [Elm test](https://package.elm-lang.org/packages/elm-explorations/test/latest/) for unit testing
 
 # Contact
