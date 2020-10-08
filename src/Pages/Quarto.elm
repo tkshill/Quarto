@@ -127,14 +127,18 @@ type alias Activeplayer =
     Player
 
 
+type alias Winner =
+    Player
+
+
 type SelectedPiece
     = Selected Gamepiece
     | NoPieceSelected
 
 
 type Gamestatus
-    = ActiveGame Activeplayer SelectedPiece
-    | GameWon Player
+    = GameInProgress Activeplayer SelectedPiece
+    | GameWon Winner
     | Draw
 
 
@@ -354,7 +358,7 @@ initModel : Model
 initModel =
     { board = initialCells
     , remainingPieces = initialPieces
-    , gamestatus = ActiveGame initialPlayer initialSelectedPiece
+    , gamestatus = GameInProgress initialPlayer initialSelectedPiece
     }
 
 
@@ -398,7 +402,7 @@ update msg model =
 updateGamepiecePlaced : Cell -> Model -> Model
 updateGamepiecePlaced { cellname, cellstate } model =
     case model.gamestatus of
-        ActiveGame player selectedPiece ->
+        GameInProgress player selectedPiece ->
             case ( selectedPiece, cellstate ) of
                 ( Selected gamepiece, EmptyCell ) ->
                     let
@@ -419,7 +423,7 @@ updateGamepiecePlaced { cellname, cellstate } model =
                             { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = Draw }
 
                         _ ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = ActiveGame player NoPieceSelected }
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameInProgress player NoPieceSelected }
 
                 _ ->
                     model
@@ -431,7 +435,7 @@ updateGamepiecePlaced { cellname, cellstate } model =
 updateSelectingGamepiece : Gamepiece -> Model -> Model
 updateSelectingGamepiece gamepiece model =
     case model.gamestatus of
-        ActiveGame player _ ->
+        GameInProgress player _ ->
             let
                 newActiveplayer =
                     updateActiveplayer player
@@ -439,7 +443,7 @@ updateSelectingGamepiece gamepiece model =
                 newPieceSelected =
                     Selected gamepiece
             in
-            { model | gamestatus = ActiveGame newActiveplayer newPieceSelected }
+            { model | gamestatus = GameInProgress newActiveplayer newPieceSelected }
 
         _ ->
             model
@@ -598,9 +602,9 @@ view model =
 viewGamestatus : Gamestatus -> Element Msg
 viewGamestatus gamestatus =
     case gamestatus of
-        GameWon player ->
+        GameWon winner ->
             row []
-                [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString player ]
+                [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString winner ]
                 , viewRestartButton
                 ]
 
@@ -610,20 +614,20 @@ viewGamestatus gamestatus =
                 , viewRestartButton
                 ]
 
-        ActiveGame player selectedGamepiece ->
+        GameInProgress activeplayer selectedGamepiece ->
             case selectedGamepiece of
                 Selected gamepiece ->
                     row []
                         [ text "Piece Selected: "
                         , viewGamepiece gamepiece
-                        , text <| "Active Player: " ++ playerToString player
+                        , text <| "Active Player: " ++ playerToString activeplayer
                         ]
 
                 NoPieceSelected ->
                     row []
                         [ viewSvgbox
                             [ Svg.rect [ Attr.width "60", Attr.height "60", Attr.fill "none" ] [] ]
-                        , text <| "Active Player: " ++ playerToString player
+                        , text <| "Active Player: " ++ playerToString activeplayer
                         ]
 
 
