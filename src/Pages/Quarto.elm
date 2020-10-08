@@ -692,7 +692,7 @@ viewSvgbox objects =
         svg [ Attr.width "60", Attr.height "60", Attr.viewBox "0 0 60 60" ] objects
 
 
-shapeAndSizefunc :
+shapeAndSizeToSvgfuncAndAttrs :
     Shape
     -> Size
     ->
@@ -701,7 +701,7 @@ shapeAndSizefunc :
           -> Svg msg
         , List (Svg.Attribute msg)
         )
-shapeAndSizefunc shape size =
+shapeAndSizeToSvgfuncAndAttrs shape size =
     case ( shape, size ) of
         ( Circle, Small ) ->
             ( Svg.circle, [ Attr.r "15", Attr.cx "30", Attr.cy "30" ] )
@@ -716,8 +716,8 @@ shapeAndSizefunc shape size =
             ( Svg.rect, [ Attr.x "5", Attr.y "5", Attr.width "50", Attr.height "50" ] )
 
 
-colourfunc : Colour -> List (Svg.Attribute msg)
-colourfunc colour =
+colourToSvgAttrs : Colour -> List (Svg.Attribute msg)
+colourToSvgAttrs colour =
     case colour of
         Colour1 ->
             [ Styles.colortoCssRGBString Styles.red
@@ -730,8 +730,8 @@ colourfunc colour =
             ]
 
 
-patternfunc : Pattern -> List (Svg.Attribute msg)
-patternfunc pattern =
+patternToSvgAttrs : Pattern -> List (Svg.Attribute msg)
+patternToSvgAttrs pattern =
     case pattern of
         Solid ->
             [ Attr.fill "currentcolor" ]
@@ -744,12 +744,12 @@ makeGamepieceSvg : Gamepiece -> Svg msg
 makeGamepieceSvg { shape, colour, pattern, size } =
     let
         ( shapefunc, sizeAttributes ) =
-            shapeAndSizefunc shape size
+            shapeAndSizeToSvgfuncAndAttrs shape size
 
         colourAttributes =
-            colourfunc colour
+            colourToSvgAttrs colour
 
         patternAttributes =
-            patternfunc pattern
+            patternToSvgAttrs pattern
     in
     shapefunc (List.concat [ patternAttributes, colourAttributes, sizeAttributes ]) []
