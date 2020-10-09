@@ -120,8 +120,8 @@ type alias CellBoard =
 
 
 type Player
-    = Player1
-    | Player2
+    = HumanPlayer
+    | ComputerPlayer
 
 
 type alias Activeplayer =
@@ -304,11 +304,11 @@ cellstateToMaybe cellstate =
 playerToString : Player -> String
 playerToString player =
     case player of
-        Player1 ->
-            "Player1"
+        HumanPlayer ->
+            "Human Player"
 
-        Player2 ->
-            "Player2"
+        ComputerPlayer ->
+            "Beep Boop"
 
 
 
@@ -317,7 +317,7 @@ playerToString player =
 
 initialPlayer : Player
 initialPlayer =
-    Player1
+    HumanPlayer
 
 
 initialSelectedPiece : SelectedPiece
@@ -378,19 +378,21 @@ init _ =
 
 
 type Msg
-    = ClickedAvilableGampiece Gamepiece
-    | ClickedCellOnGameBoard Cell
+    = SelectedAvilableGampiece Gamepiece
+    | SelectedCellOnGameBoard Cell
+    -- | ComputerPlayerPlayGamePiece Cell
+    -- | ComputerPlayerSelectGamePiece Gamepiece
     | ClickedRestartGameButton
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ClickedAvilableGampiece gamepiece ->
+        SelectedAvilableGampiece gamepiece ->
             updateSelectingGamepiece gamepiece model
                 |> withCmd
 
-        ClickedCellOnGameBoard cell ->
+        SelectedCellOnGameBoard cell ->
             updateGamepiecePlaced cell model
                 |> withCmd
 
@@ -461,11 +463,11 @@ updateSelectingGamepiece gamepiece model =
 updateActiveplayer : Player -> Player
 updateActiveplayer player =
     case player of
-        Player1 ->
-            Player2
+        HumanPlayer ->
+            ComputerPlayer
 
-        Player2 ->
-            Player1
+        ComputerPlayer ->
+            HumanPlayer
 
 
 updateCellBoard : Cellname -> Gamepiece -> CellBoard -> CellBoard
@@ -663,7 +665,7 @@ viewCellButton : Cell -> Element Msg
 viewCellButton cell =
     Input.button
         [ Border.color Styles.blue, Border.width 5 ]
-        { onPress = Just (ClickedCellOnGameBoard cell)
+        { onPress = Just (SelectedCellOnGameBoard cell)
         , label = viewCell cell
         }
 
@@ -690,7 +692,7 @@ viewRemainingPiecesButton gamepiece =
         gamePieceImage =
             viewGamepiece gamepiece
     in
-    Input.button [] { onPress = Just (ClickedAvilableGampiece gamepiece), label = gamePieceImage }
+    Input.button [] { onPress = Just (SelectedAvilableGampiece gamepiece), label = gamePieceImage }
 
 
 viewGamepiece : Gamepiece -> Element msg
