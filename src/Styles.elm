@@ -1,8 +1,6 @@
 module Styles exposing (black, blue, colortoCssRGBString, red, white, yellow)
 
 import Element exposing (Color, rgb255)
-import Element.Font as Font 
-
 
 
 
@@ -50,11 +48,3 @@ colortoCssRGBString color =
         ++ ","
         ++ String.fromFloat (rgb.blue * 255)
         ++ ")"
-
-
-orbitron = Font.family [
-    Font.external {
-    name = "Orbitron"
-    ,url = "https://fonts.googleapis.com/css?family=Orbitron"
-    } 
-    ,Font.sansSerif ]

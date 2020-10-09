@@ -9,7 +9,7 @@ module Shared exposing
     )
 
 import Browser.Navigation exposing (Key)
-import Element exposing (..)
+import Element exposing (centerX, column, fill, height, link, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Font as Font
 import Spa.Document exposing (Document)
@@ -33,7 +33,7 @@ type alias Model =
 
 
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
-init flags url key =
+init _ url key =
     ( Model url key
     , Cmd.none
     )
@@ -55,7 +55,7 @@ update msg model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
     Sub.none
 
 
@@ -67,7 +67,7 @@ view :
     { page : Document msg, toMsg : Msg -> msg }
     -> Model
     -> Document msg
-view { page, toMsg } model =
+view { page, toMsg } _ =
     { title = page.title
     , body =
         [ column [ spacing 20, height fill, width fill ]

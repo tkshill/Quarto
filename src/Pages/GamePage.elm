@@ -1,4 +1,4 @@
-module Pages.Quarto exposing
+module Pages.GamePage exposing
     ( Colour(..)
     , Gamepiece
     , Model
@@ -29,10 +29,11 @@ import Svg.Attributes as Attr
 
 page : Page Params Model Msg
 page =
-    Page.sandbox
+    Page.element
         { init = init
         , update = update
         , view = view
+        , subscriptions = subscriptions
         }
 
 
@@ -366,9 +367,9 @@ type alias Params =
     ()
 
 
-init : Url Params -> Model
-init { params } =
-    initModel
+init : Url Params -> ( Model, Cmd Msg )
+init _ =
+    initModel |> withCmd
 
 
 
@@ -382,21 +383,29 @@ type Msg
     | ClickedRestartGameButton
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ClickedAvilableGampiece gamepiece ->
             updateSelectingGamepiece gamepiece model
+                |> withCmd
 
         ClickedCellOnGameBoard cell ->
             updateGamepiecePlaced cell model
+                |> withCmd
 
         ClickedRestartGameButton ->
             initModel
+                |> withCmd
 
 
 
 -- Update Helpers
+
+
+withCmd : Model -> ( Model, Cmd Msg )
+withCmd model =
+    ( model, Cmd.none )
 
 
 updateGamepiecePlaced : Cell -> Model -> Model
@@ -574,6 +583,15 @@ isWin board =
         -- if any values remain, return  bool
         |> not
         << List.isEmpty
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
 
 
 
