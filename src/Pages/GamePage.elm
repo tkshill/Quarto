@@ -227,6 +227,14 @@ gamepieceToList { shape, colour, pattern, size } =
     , sizeToString size
     ]
 
+addSpaceToGamepieceList : List String -> List String
+addSpaceToGamepieceList spacedGamepieceList =
+    List.intersperse " " spacedGamepieceList
+
+gamepieceListToString : List String -> String
+gamepieceListToString gamepieceList =
+    String.concat gamepieceList
+
 
 
 -- Cell Name Helpers
@@ -663,7 +671,7 @@ viewCell { cellname, cellstate } =
 viewCellButton : Cell -> Element Msg
 viewCellButton cell =
     Input.button
-        [ Border.color Styles.blue, Border.width 5, Region.description gamepieceListToString ]
+        [ Border.color Styles.blue, Border.width 5 ]
         { onPress = Just (ClickedCellOnGameBoard cell)
         , label = viewCell cell
         }
@@ -691,7 +699,7 @@ viewRemainingPiecesButton gamepiece =
         gamePieceImage =
             viewGamepiece gamepiece
     in
-    Input.button [Region.description gamepieceListToString ] { onPress = Just (ClickedAvilableGampiece gamepiece), label = gamePieceImage }
+    Input.button [Region.description (gamepieceListToString ( addSpaceToGamepieceList (gamepieceToList gamepiece))) ] { onPress = Just (ClickedAvilableGampiece gamepiece), label = gamePieceImage }
 
 
 viewGamepiece : Gamepiece -> Element msg
