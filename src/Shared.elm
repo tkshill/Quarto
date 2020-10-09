@@ -44,13 +44,13 @@ init _ url key =
 
 
 type Msg
-    = ReplaceMe
+    = NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ReplaceMe ->
+        NoOp ->
             ( model, Cmd.none )
 
 
@@ -67,13 +67,13 @@ view :
     { page : Document msg, toMsg : Msg -> msg }
     -> Model
     -> Document msg
-view { page, toMsg } _ =
+view { page } _ =
     { title = page.title
     , body =
         [ column [ spacing 20, height fill, width fill ]
             [ row [ width fill, spacing 20, padding 20, Background.color Styles.blue ]
-                [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Homepage" }
-                , link [ Font.color Styles.white ] { url = Route.toString Route.Quarto, label = text "Game" }
+                [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
+                , link [ Font.color Styles.white ] { url = Route.toString Route.GamePage, label = text "Play!" }
                 ]
             , column [ height fill, centerX ] page.body
             ]

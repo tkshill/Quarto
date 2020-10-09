@@ -21,7 +21,7 @@ import Pages.NotFound exposing (Msg)
 import Set
 import Spa.Document exposing (Document)
 import Spa.Page as Page exposing (Page)
-import Spa.Url as Url exposing (Url)
+import Spa.Url as Url
 import Styles
 import Svg exposing (Svg, svg)
 import Svg.Attributes as Attr
@@ -367,7 +367,7 @@ type alias Params =
     ()
 
 
-init : Url Params -> ( Model, Cmd Msg )
+init : Url.Url Params -> ( Model, Cmd Msg )
 init _ =
     initModel |> withCmd
 
