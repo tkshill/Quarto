@@ -5,7 +5,7 @@ module Spa.Document exposing
     )
 
 import Browser
-import Element exposing (..)
+import Element exposing (Element, column, fill, height, width)
 
 
 type alias Document msg =
