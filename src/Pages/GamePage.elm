@@ -16,6 +16,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Element.Region as Region
 import List.Extra as Liste
 import Pages.NotFound exposing (Msg)
 import Set
@@ -662,7 +663,7 @@ viewCell { cellname, cellstate } =
 viewCellButton : Cell -> Element Msg
 viewCellButton cell =
     Input.button
-        [ Border.color Styles.blue, Border.width 5 ]
+        [ Border.color Styles.blue, Border.width 5, Region.description gamepieceListToString ]
         { onPress = Just (ClickedCellOnGameBoard cell)
         , label = viewCell cell
         }
@@ -690,7 +691,7 @@ viewRemainingPiecesButton gamepiece =
         gamePieceImage =
             viewGamepiece gamepiece
     in
-    Input.button [] { onPress = Just (ClickedAvilableGampiece gamepiece), label = gamePieceImage }
+    Input.button [Region.description gamepieceListToString ] { onPress = Just (ClickedAvilableGampiece gamepiece), label = gamePieceImage }
 
 
 viewGamepiece : Gamepiece -> Element msg
