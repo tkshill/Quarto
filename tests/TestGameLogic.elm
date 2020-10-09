@@ -1,4 +1,4 @@
-module Tests exposing (suite)
+module TestGameLogic exposing (suite)
 
 import Expect
 import Fuzz exposing (Fuzzer)
