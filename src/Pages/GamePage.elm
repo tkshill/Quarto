@@ -444,7 +444,7 @@ updateGamepiecePlaced { cellname, cellstate } model =
 updateSelectingGamepiece : Gamepiece -> Model -> Model
 updateSelectingGamepiece gamepiece model =
     case model.gamestatus of
-        GameInProgress player _ ->
+        GameInProgress player NoPieceSelected ->
             let
                 newActiveplayer =
                     updateActiveplayer player
