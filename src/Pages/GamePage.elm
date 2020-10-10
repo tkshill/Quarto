@@ -671,7 +671,7 @@ viewCell { cellname, cellstate } =
 viewCellButton : Cell -> Element Msg
 viewCellButton cell =
     Input.button
-        [ Border.color Styles.blue, Border.width 5 ]
+        [ Border.color Styles.blue, Border.width 5, Region.description ("Square " ++ cellnameToString cell.cellname) ]
         { onPress = Just (ClickedCellOnGameBoard cell)
         , label = viewCell cell
         }
@@ -707,6 +707,19 @@ viewGamepiece gamepiece =
     gamepiece
         |> makeGamepieceSvg
         |> (\singleSvg -> viewSvgbox [ singleSvg ])
+
+
+
+-- Description helper functions
+
+
+cellStateToDescription : Cell -> Cellstate -> String
+cellStateToDescription cell cellState =
+    case cellState of 
+        EmptyCell ->
+            "Square " ++ cellnameToString cell.cellname ++ ": Empty square"
+        Occupied gameiece ->
+            "Square " ++ cellnameToString cell.cellname ++ gamepieceListToString ( addSpaceToGamepieceList (gamepieceToList (cellstateToMaybe cellState)))
 
 
 
