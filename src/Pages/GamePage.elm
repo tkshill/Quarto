@@ -118,27 +118,37 @@ type alias CellBoard =
     , d4 : Cell
     }
 
-
-type Player
+type PlayerType
     = HumanPlayer
     | ComputerPlayer
 
+type alias Player1 =
+    PlayerType
 
-type alias Activeplayer =
-    Player
+type alias Player2 =
+    PlayerType
+
+type ActivePlayer
+    = Player1
+    | Player2
 
 
 type alias Winner =
-    Player
+    ActivePlayer
 
 
 type SelectedPiece
     = Selected Gamepiece
     | NoPieceSelected
 
+type CurrentTurn
+    = Player1Selecting
+    | Player2Playing
+    | Player2Selecting
+    | Player1Playing
 
 type Gamestatus
-    = GameInProgress Activeplayer SelectedPiece
+    = GameInProgress ActivePlayer SelectedPiece CurrentTurn
     | GameWon Winner
     | Draw
 
@@ -301,23 +311,34 @@ cellstateToMaybe cellstate =
 -- Player helpers
 
 
-playerToString : Player -> String
+playerToString : ActivePlayer -> String
 playerToString player =
     case player of
-        HumanPlayer ->
-            "Human Player"
+        Player1 ->
+            "Player1"
 
-        ComputerPlayer ->
-            "Beep Boop"
+        Player2 ->
+            "Player2"
 
 
 
 -- INIT
 
+initialCurrentTurn : CurrentTurn
+initialCurrentTurn =
+    Player1Selecting
 
-initialPlayer : Player
-initialPlayer =
+initialPlayer1 : PlayerType
+initialPlayer1 =
     HumanPlayer
+
+initialPlayer2 : PlayerType
+initialPlayer2 =
+    ComputerPlayer
+
+initialPlayer : ActivePlayer
+initialPlayer =
+    Player1
 
 
 initialSelectedPiece : SelectedPiece
@@ -359,7 +380,7 @@ initModel : Model
 initModel =
     { board = initialCells
     , remainingPieces = initialPieces
-    , gamestatus = GameInProgress initialPlayer initialSelectedPiece
+    , gamestatus = GameInProgress initialPlayer initialSelectedPiece initialCurrentTurn
     }
 
 
@@ -380,8 +401,6 @@ init _ =
 type Msg
     = SelectedAvilableGampiece Gamepiece
     | SelectedCellOnGameBoard Cell
-    -- | ComputerPlayerPlayGamePiece Cell
-    -- | ComputerPlayerSelectGamePiece Gamepiece
     | ClickedRestartGameButton
 
 
@@ -413,7 +432,7 @@ withCmd model =
 updateGamepiecePlaced : Cell -> Model -> Model
 updateGamepiecePlaced { cellname, cellstate } model =
     case model.gamestatus of
-        GameInProgress player selectedPiece ->
+        GameInProgress player selectedPiece currentTurn ->
             case ( selectedPiece, cellstate ) of
                 ( Selected gamepiece, EmptyCell ) ->
                     let
@@ -425,6 +444,10 @@ updateGamepiecePlaced { cellname, cellstate } model =
 
                         remainingPieces =
                             removeGamepieceFromRemaining gamepiece model.remainingPieces
+
+                        newCurrentTurn =
+                            updateCurrentTurn currentTurn
+
                     in
                     case ( win, remainingPieces ) of
                         ( True, _ ) ->
@@ -434,7 +457,7 @@ updateGamepiecePlaced { cellname, cellstate } model =
                             { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = Draw }
 
                         _ ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameInProgress player NoPieceSelected }
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameInProgress player NoPieceSelected newCurrentTurn }
 
                 _ ->
                     model
@@ -446,28 +469,50 @@ updateGamepiecePlaced { cellname, cellstate } model =
 updateSelectingGamepiece : Gamepiece -> Model -> Model
 updateSelectingGamepiece gamepiece model =
     case model.gamestatus of
-        GameInProgress player NoPieceSelected ->
+    -- player 1 is selecting and player 1 is a human
+        GameInProgress player NoPieceSelected currentTurn ->
             let
-                newActiveplayer =
-                    updateActiveplayer player
+                newActivePlayer =
+                    updateActivePlayer player
 
                 newPieceSelected =
                     Selected gamepiece
+
+                newCurrentTurn =
+                    updateCurrentTurn currentTurn
             in
-            { model | gamestatus = GameInProgress newActiveplayer newPieceSelected }
+            { model | gamestatus = GameInProgress newActivePlayer newPieceSelected newCurrentTurn }
+            -- return command message
+
+
 
         _ ->
             model
 
 
-updateActiveplayer : Player -> Player
-updateActiveplayer player =
+updateActivePlayer : ActivePlayer -> ActivePlayer
+updateActivePlayer player =
     case player of
-        HumanPlayer ->
-            ComputerPlayer
+        Player1 ->
+            Player2
 
-        ComputerPlayer ->
-            HumanPlayer
+        Player2 ->
+            Player1
+
+updateCurrentTurn : CurrentTurn -> CurrentTurn
+updateCurrentTurn turn =
+    case turn of
+        Player1Selecting ->
+            Player2Playing
+
+        Player1Playing ->
+            Player2Selecting
+
+        Player2Selecting ->
+            Player1Playing
+
+        Player2Playing ->
+            Player1Selecting
 
 
 updateCellBoard : Cellname -> Gamepiece -> CellBoard -> CellBoard
@@ -634,20 +679,20 @@ viewGamestatus gamestatus =
                 , viewRestartButton
                 ]
 
-        GameInProgress activeplayer selectedGamepiece ->
+        GameInProgress activePlayer selectedGamepiece _ ->
             case selectedGamepiece of
                 Selected gamepiece ->
                     row []
                         [ text "Piece Selected: "
                         , viewGamepiece gamepiece
-                        , text <| "Active Player: " ++ playerToString activeplayer
+                        , text <| "Active Player: " ++ playerToString activePlayer
                         ]
 
                 NoPieceSelected ->
                     row []
                         [ viewSvgbox
                             [ Svg.rect [ Attr.width "60", Attr.height "60", Attr.fill "none" ] [] ]
-                        , text <| "Active Player: " ++ playerToString activeplayer
+                        , text <| "Active Player: " ++ playerToString activePlayer
                         ]
 
 
