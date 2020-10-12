@@ -144,8 +144,8 @@ type alias Model =
     { board : CellBoard
     , remainingPieces : List Gamepiece
     , gamestatus : Gamestatus
-    , player1: Player
-    , player2: Player
+    , player1 : Player
+    , player2 : Player
     }
 
 
@@ -296,29 +296,18 @@ cellstateToMaybe cellstate =
             Nothing
 
 
-
 -- Player helpers
 
 
-playerTypeToString : ActivePlayer -> String
-playerTypeToString playerType =
-    case playerType of
-        HumanPlayer ->
-            "Human"
 
-        ComputerPlayer ->
-            "Beep Boop"
-
-
-playerToString : ActivePlayer -> String
+playerToString : Player -> String
 playerToString player =
     case player of
-        Player1 ->
-            "Player 1 (" ++ playerTypeToString Player1 ++ ")"
+        HumanPlayer p ->
+            p
 
-        Player2 ->
-            "Player 1 (" ++ playerTypeToString player ++ ")"
-
+        ComputerPlayer p ->
+            p
 
 
 -- INIT
@@ -331,7 +320,7 @@ initialPlayer1 : Player
 initialPlayer1 =
     HumanPlayer "Human"
 
-initialPlayer2 : PlayerType
+initialPlayer2 : Player
 initialPlayer2 =
     ComputerPlayer "Beep Boop"
 
@@ -447,10 +436,10 @@ updateGamepiecePlaced { cellname, cellstate } model =
                     in
                     case ( win, remainingPieces, currentTurn) of
                         ( True, _, Player1Playing ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon Player1 }
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon model.player1 }
 
                         ( True, _, Player2Playing ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon Player2 }
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon model.player2 }
 
                         ( _, [], _ ) ->
                             { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = Draw }
@@ -492,13 +481,13 @@ updateCurrentTurn turn =
             Player2Playing
 
         Player1Playing ->
-            Player2Selecting
+            Player1Selecting
 
         Player2Selecting ->
             Player1Playing
 
         Player2Playing ->
-            Player1Selecting
+            Player2Selecting
 
 
 updateCellBoard : Cellname -> Gamepiece -> CellBoard -> CellBoard
@@ -642,7 +631,7 @@ view model =
                     Liste.greedyGroupsOf 4 <|
                         List.map viewRemainingPiecesButton model.remainingPieces
             , el [ Font.center, width fill ] (text "Game Status")
-            , viewGamestatus model.gamestatus
+            , viewGamestatus model.gamestatus model.player1 model.player2
             , el [ Font.center, width fill ] (text "GameBoard")
             , viewBoard model.board
             ]
@@ -650,12 +639,12 @@ view model =
     }
 
 
-viewGamestatus : Gamestatus -> Element Msg
-viewGamestatus gamestatus =
+viewGamestatus : Gamestatus -> Player -> Player -> Element Msg
+viewGamestatus gamestatus player1 player2 =
     case gamestatus of
         GameWon winner ->
             row []
-                [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString winner ]
+                [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString winner ++ "!" ]
                 , viewRestartButton
                 ]
 
@@ -665,21 +654,41 @@ viewGamestatus gamestatus =
                 , viewRestartButton
                 ]
 
-        GameInProgress activePlayer selectedGamepiece _ ->
-            case selectedGamepiece of
-                Selected gamepiece ->
+        GameInProgress selectedGamepiece currentTurn ->
+            case (currentTurn, selectedGamepiece) of
+                (Player1Playing, Selected gamepiece) ->
                     row []
-                        [ text "Piece Selected: "
+                        [ text <| playerToString player2 ++ " has selected "
                         , viewGamepiece gamepiece
-                        , text <| "Active Player: " ++ playerToString activePlayer
+                        , text <| "It's " ++ playerToString player1 ++ "'s turn!"
                         ]
 
-                NoPieceSelected ->
+                (Player2Playing, Selected gamepiece) ->
+                    row []
+                        [ text <| playerToString player1 ++ " has selected "
+                        , viewGamepiece gamepiece
+                        , text <| "It's " ++ playerToString player2 ++ "'s turn!"
+                        ]
+
+                (Player1Selecting, _) ->
                     row []
                         [ viewSvgbox
                             [ Svg.rect [ Attr.width "60", Attr.height "60", Attr.fill "none" ] [] ]
-                        , text <| "Active Player: " ++ playerToString activePlayer
+                        , text <| playerToString player1 ++ "'s turn to select a piece!"
                         ]
+
+                (Player2Selecting, _) ->
+                    row []
+                        [ viewSvgbox
+                            [ Svg.rect [ Attr.width "60", Attr.height "60", Attr.fill "none" ] [] ]
+                        , text <| playerToString player2 ++ "'s turn to select a piece!"
+                        ]
+
+                _ ->
+                    row []
+                        [ text <| "This is an impossible state"
+                        ]
+
 
 
 viewCell : Cell -> Element Msg
