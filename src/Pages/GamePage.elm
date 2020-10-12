@@ -118,23 +118,10 @@ type alias CellBoard =
     , d4 : Cell
     }
 
-type PlayerType
-    = HumanPlayer
-    | ComputerPlayer
 
-type alias Player1 =
-    PlayerType
-
-type alias Player2 =
-    PlayerType
-
-type ActivePlayer
-    = Player1
-    | Player2
-
-
-type alias Winner =
-    ActivePlayer
+type Player
+    = HumanPlayer String
+    | ComputerPlayer String
 
 
 type SelectedPiece
@@ -148,8 +135,8 @@ type CurrentTurn
     | Player1Playing
 
 type Gamestatus
-    = GameInProgress ActivePlayer SelectedPiece CurrentTurn
-    | GameWon Winner
+    = GameInProgress SelectedPiece CurrentTurn
+    | GameWon Player
     | Draw
 
 
@@ -157,6 +144,8 @@ type alias Model =
     { board : CellBoard
     , remainingPieces : List Gamepiece
     , gamestatus : Gamestatus
+    , player1: Player
+    , player2: Player
     }
 
 
@@ -311,14 +300,24 @@ cellstateToMaybe cellstate =
 -- Player helpers
 
 
+playerTypeToString : ActivePlayer -> String
+playerTypeToString playerType =
+    case playerType of
+        HumanPlayer ->
+            "Human"
+
+        ComputerPlayer ->
+            "Beep Boop"
+
+
 playerToString : ActivePlayer -> String
 playerToString player =
     case player of
         Player1 ->
-            "Player1"
+            "Player 1 (" ++ playerTypeToString Player1 ++ ")"
 
         Player2 ->
-            "Player2"
+            "Player 1 (" ++ playerTypeToString player ++ ")"
 
 
 
@@ -328,18 +327,13 @@ initialCurrentTurn : CurrentTurn
 initialCurrentTurn =
     Player1Selecting
 
-initialPlayer1 : PlayerType
+initialPlayer1 : Player
 initialPlayer1 =
-    HumanPlayer
+    HumanPlayer "Human"
 
 initialPlayer2 : PlayerType
 initialPlayer2 =
-    ComputerPlayer
-
-initialPlayer : ActivePlayer
-initialPlayer =
-    Player1
-
+    ComputerPlayer "Beep Boop"
 
 initialSelectedPiece : SelectedPiece
 initialSelectedPiece =
@@ -380,7 +374,9 @@ initModel : Model
 initModel =
     { board = initialCells
     , remainingPieces = initialPieces
-    , gamestatus = GameInProgress initialPlayer initialSelectedPiece initialCurrentTurn
+    , gamestatus = GameInProgress initialSelectedPiece initialCurrentTurn
+    , player1 = initialPlayer1
+    , player2 = initialPlayer2
     }
 
 
@@ -432,7 +428,7 @@ withCmd model =
 updateGamepiecePlaced : Cell -> Model -> Model
 updateGamepiecePlaced { cellname, cellstate } model =
     case model.gamestatus of
-        GameInProgress player selectedPiece currentTurn ->
+        GameInProgress selectedPiece currentTurn ->
             case ( selectedPiece, cellstate ) of
                 ( Selected gamepiece, EmptyCell ) ->
                     let
@@ -449,15 +445,18 @@ updateGamepiecePlaced { cellname, cellstate } model =
                             updateCurrentTurn currentTurn
 
                     in
-                    case ( win, remainingPieces ) of
-                        ( True, _ ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon player }
+                    case ( win, remainingPieces, currentTurn) of
+                        ( True, _, Player1Playing ) ->
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon Player1 }
 
-                        ( _, [] ) ->
+                        ( True, _, Player2Playing ) ->
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon Player2 }
+
+                        ( _, [], _ ) ->
                             { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = Draw }
 
                         _ ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameInProgress player NoPieceSelected newCurrentTurn }
+                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameInProgress NoPieceSelected newCurrentTurn }
 
                 _ ->
                     model
@@ -470,10 +469,8 @@ updateSelectingGamepiece : Gamepiece -> Model -> Model
 updateSelectingGamepiece gamepiece model =
     case model.gamestatus of
     -- player 1 is selecting and player 1 is a human
-        GameInProgress player NoPieceSelected currentTurn ->
+        GameInProgress NoPieceSelected currentTurn ->
             let
-                newActivePlayer =
-                    updateActivePlayer player
 
                 newPieceSelected =
                     Selected gamepiece
@@ -481,23 +478,12 @@ updateSelectingGamepiece gamepiece model =
                 newCurrentTurn =
                     updateCurrentTurn currentTurn
             in
-            { model | gamestatus = GameInProgress newActivePlayer newPieceSelected newCurrentTurn }
+            { model | gamestatus = GameInProgress newPieceSelected newCurrentTurn }
             -- return command message
-
-
 
         _ ->
             model
 
-
-updateActivePlayer : ActivePlayer -> ActivePlayer
-updateActivePlayer player =
-    case player of
-        Player1 ->
-            Player2
-
-        Player2 ->
-            Player1
 
 updateCurrentTurn : CurrentTurn -> CurrentTurn
 updateCurrentTurn turn =
