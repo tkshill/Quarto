@@ -7,8 +7,12 @@ module Pages.GamePage exposing
     , Pattern(..)
     , Shape(..)
     , Size(..)
+    , initModel
     , matchingDimensions
     , page
+    , update
+    , view
+    , withCmd
     )
 
 import Element exposing (Element, centerX, column, el, fill, row, spacing, text, width)
