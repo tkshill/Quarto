@@ -1,5 +1,6 @@
 module Pages.GamePage exposing
     ( Colour(..)
+    , Effect(..)
     , Gamepiece
     , Model
     , Msg
@@ -12,7 +13,7 @@ module Pages.GamePage exposing
     , page
     , update
     , view
-    , withCmd
+    , withNoEffects
     )
 
 import Element exposing (Element, centerX, column, el, fill, row, spacing, text, width)
@@ -35,8 +36,12 @@ import Svg.Attributes as Attr
 page : Page Params Model Msg
 page =
     Page.element
-        { init = init
-        , update = update
+        { init =
+            \params ->
+                init params |> Tuple.mapSecond perform
+        , update =
+            \msg model ->
+                update msg model |> Tuple.mapSecond perform
         , view = view
         , subscriptions = subscriptions
         }
@@ -240,6 +245,7 @@ gamepieceToString gamepiece =
         |> String.concat
 
 
+
 -- Cell Name Helpers
 
 
@@ -379,14 +385,13 @@ type alias Params =
     ()
 
 
-init : Url.Url Params -> ( Model, Cmd Msg )
+init : Url.Url Params -> ( Model, Effect )
 init _ =
-    initModel |> withCmd
+    ( initModel, NoEffect )
 
 
 
 -- UPDATE
--- Messages
 
 
 type Msg
@@ -395,29 +400,44 @@ type Msg
     | ClickedRestartGameButton
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+type Effect
+    = NoEffect
+
+
+update : Msg -> Model -> ( Model, Effect )
 update msg model =
     case msg of
         ClickedAvilableGampiece gamepiece ->
             updateSelectingGamepiece gamepiece model
-                |> withCmd
+                |> withNoEffects
 
         ClickedCellOnGameBoard cell ->
             updateGamepiecePlaced cell model
-                |> withCmd
+                |> withNoEffects
 
         ClickedRestartGameButton ->
-            initModel
-                |> withCmd
+            initModel |> withNoEffects
 
 
 
 -- Update Helpers
 
 
-withCmd : Model -> ( Model, Cmd Msg )
-withCmd model =
-    ( model, Cmd.none )
+withEffect : Effect -> Model -> ( Model, Effect )
+withEffect effect model =
+    ( model, effect )
+
+
+withNoEffects : Model -> ( Model, Effect )
+withNoEffects =
+    withEffect NoEffect
+
+
+perform : Effect -> Cmd Msg
+perform effect =
+    case effect of
+        NoEffect ->
+            Cmd.none
 
 
 updateGamepiecePlaced : Cell -> Model -> Model
@@ -696,10 +716,14 @@ viewRemainingPiecesButton gamepiece =
     let
         gamePieceImage =
             viewGamepiece gamepiece
+
         ariaDescription =
             gamepieceToString gamepiece
     in
-    Input.button [Region.description ariaDescription ] { onPress = Just (ClickedAvilableGampiece gamepiece), label = gamePieceImage }
+    Input.button [ Region.description ariaDescription ]
+        { onPress = Just (ClickedAvilableGampiece gamepiece)
+        , label = gamePieceImage
+        }
 
 
 viewGamepiece : Gamepiece -> Element msg
@@ -715,11 +739,12 @@ viewGamepiece gamepiece =
 
 cellStateToDescription : Cell -> String
 cellStateToDescription { cellname, cellstate } =
-    case cellstate of 
+    case cellstate of
         EmptyCell ->
             "Cell " ++ cellnameToString cellname ++ ": Empty cell"
+
         Occupied gamepiece ->
-            "Cell " ++ cellnameToString cellname ++ ": " ++ (gamepieceToString gamepiece)
+            "Cell " ++ cellnameToString cellname ++ ": " ++ gamepieceToString gamepiece
 
 
 
