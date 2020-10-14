@@ -413,33 +413,28 @@ withCmd model =
 
 
 updateGamepiecePlaced : Cell -> Model -> Model
-updateGamepiecePlaced { cellname, cellstate } model =
-    case model.gamestatus of
-        GameInProgress player selectedPiece ->
-            case ( selectedPiece, cellstate ) of
-                ( Selected gamepiece, EmptyCell ) ->
-                    let
-                        newBoard =
-                            updateCellBoard cellname gamepiece model.board
+updateGamepiecePlaced { cellname, cellstate } ({ board, remainingPieces, gamestatus } as model) =
+    case ( gamestatus, cellstate ) of
+        ( GameInProgress player (Selected gamepiece), EmptyCell ) ->
+            let
+                newBoard =
+                    updateCellBoard cellname gamepiece board
 
-                        win =
-                            isWin newBoard
+                win =
+                    isWin newBoard
 
-                        remainingPieces =
-                            removeGamepieceFromRemaining gamepiece model.remainingPieces
-                    in
-                    case ( win, remainingPieces ) of
-                        ( True, _ ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon player }
+                newRemainingPieces =
+                    removeGamepieceFromRemaining gamepiece remainingPieces
+            in
+            case ( win, remainingPieces ) of
+                ( True, _ ) ->
+                    { board = newBoard, remainingPieces = newRemainingPieces, gamestatus = GameWon player }
 
-                        ( _, [] ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = Draw }
-
-                        _ ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameInProgress player NoPieceSelected }
+                ( _, [] ) ->
+                    { board = newBoard, remainingPieces = newRemainingPieces, gamestatus = Draw }
 
                 _ ->
-                    model
+                    { board = newBoard, remainingPieces = newRemainingPieces, gamestatus = GameInProgress player NoPieceSelected }
 
         _ ->
             model
