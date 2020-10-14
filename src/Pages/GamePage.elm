@@ -245,6 +245,7 @@ gamepieceToString gamepiece =
         |> String.concat
 
 
+
 -- Cell Name Helpers
 
 
@@ -715,10 +716,14 @@ viewRemainingPiecesButton gamepiece =
     let
         gamePieceImage =
             viewGamepiece gamepiece
+
         ariaDescription =
             gamepieceToString gamepiece
     in
-    Input.button [Region.description ariaDescription ] { onPress = Just (ClickedAvilableGampiece gamepiece), label = gamePieceImage }
+    Input.button [ Region.description ariaDescription ]
+        { onPress = Just (ClickedAvilableGampiece gamepiece)
+        , label = gamePieceImage
+        }
 
 
 viewGamepiece : Gamepiece -> Element msg
@@ -734,11 +739,12 @@ viewGamepiece gamepiece =
 
 cellStateToDescription : Cell -> String
 cellStateToDescription { cellname, cellstate } =
-    case cellstate of 
+    case cellstate of
         EmptyCell ->
             "Cell " ++ cellnameToString cellname ++ ": Empty cell"
+
         Occupied gamepiece ->
-            "Cell " ++ cellnameToString cellname ++ ": " ++ (gamepieceToString gamepiece)
+            "Cell " ++ cellnameToString cellname ++ ": " ++ gamepieceToString gamepiece
 
 
 
