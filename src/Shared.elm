@@ -76,7 +76,7 @@ view { page } _ =
                 [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
                 , link [ Font.color Styles.white ] { url = Route.toString Route.GamePage, label = text "Play!" }
                 ]
-            , column [ height fill, centerX ] page.body
+            , column [ height fill, centerX, Region.mainContent ] page.body
             ]
         ]
     }
