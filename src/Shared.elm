@@ -12,6 +12,7 @@ import Browser.Navigation exposing (Key)
 import Element exposing (centerX, column, fill, height, link, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Font as Font
+import Element.Region as Region
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
 import Styles
@@ -71,7 +72,7 @@ view { page } _ =
     { title = page.title
     , body =
         [ column [ spacing 20, height fill, width fill ]
-            [ row [ width fill, spacing 20, padding 20, Background.color Styles.blue ]
+            [ row [ width fill, spacing 20, padding 20, Background.color Styles.blue, Region.navigation ]
                 [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
                 , link [ Font.color Styles.white ] { url = Route.toString Route.GamePage, label = text "Play!" }
                 ]
