@@ -630,11 +630,8 @@ view model =
     { title = "Quarto - Play"
     , body =
         [ column [ spacing 10, centerX ]
-            [ el [ Font.center, width fill ] (text "Remaining Pieces")
-            , column [ centerX ] <|
-                List.map (row [ centerX ]) <|
-                    Liste.greedyGroupsOf 4 <|
-                        List.map viewRemainingPiecesButton model.remainingPieces
+            [
+                viewRemainingPieces model
             , el [ Font.center, width fill ] (text "Game Status")
             , viewGamestatus model.gamestatus
             , el [ Font.center, width fill ] (text "GameBoard")
@@ -642,6 +639,20 @@ view model =
             ]
         ]
     }
+
+viewRemainingPieces: Model -> Element Msg
+viewRemainingPieces model = 
+
+    column [spacing 10, centerX] 
+    [             
+        el [ Font.center, width fill ] (text "Remaining Pieces")
+        , column [ centerX ] <|
+                List.map (row [ centerX ]) <|
+                    Liste.greedyGroupsOf 4 <|
+                        List.map viewRemainingPiecesButton model.remainingPieces]
+
+
+
 
 
 viewGamestatus : Gamestatus -> Element Msg
