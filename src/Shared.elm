@@ -72,11 +72,26 @@ view { page } _ =
     { title = page.title
     , body =
         [ column [ spacing 20, height fill, width fill ]
+<<<<<<< HEAD
             [ row [ width fill, spacing 20, padding 20, Background.color Styles.blue, Region.navigation ]
                 [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
                 , link [ Font.color Styles.white ] { url = Route.toString Route.GamePage, label = text "Play!" }
                 ]
             , column [ height fill, centerX, Region.mainContent ] page.body
+=======
+            [ header
+            , viewBody page.body
+>>>>>>> main
             ]
         ]
     }
+
+header: Element.Element msg
+header = row [ width fill, spacing 20, padding 20, Background.color Styles.blue ]
+                [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
+                , link [ Font.color Styles.white ] { url = Route.toString Route.GamePage, label = text "Play!" }
+                ]
+
+
+viewBody: List (Element.Element msg)  -> Element.Element msg
+viewBody listy = column [ height fill, centerX ] listy

@@ -630,34 +630,45 @@ view model =
     { title = "Quarto - Play"
     , body =
         [ column [ spacing 10, centerX ]
-            [ el [ Font.center, width fill ] (text "Remaining Pieces")
-            , column [ centerX ] <|
-                List.map (row [ centerX ]) <|
-                    Liste.greedyGroupsOf 4 <|
-                        List.map viewRemainingPiecesButton model.remainingPieces
-            , el [ Font.center, width fill ] (text "Game Status")
+            [
+              viewRemainingPieces model.remainingPieces
             , viewGamestatus model.gamestatus
-            , el [ Font.center, width fill ] (text "GameBoard")
             , viewBoard model.board
             ]
         ]
     }
 
+viewRemainingPieces: List Gamepiece -> Element Msg
+viewRemainingPieces remainingPieces = 
+
+    column [spacing 10, centerX] 
+    [             
+        el [ Font.center, width fill ] (text "Remaining Pieces")
+        , column [ centerX ] <|
+                List.map (row [ centerX ]) <|
+                    Liste.greedyGroupsOf 4 <|
+                        List.map viewRemainingPiecesButton remainingPieces]
+
+
+
+
 
 viewGamestatus : Gamestatus -> Element Msg
 viewGamestatus gamestatus =
+    let 
+
+        containerize : Element Msg -> Element Msg
+        containerize elem = column [] [ (el [ Font.center, width fill ] (text "Game Status")), elem ]
+
+    in
     case gamestatus of
         GameWon winner ->
-            row []
-                [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString winner ]
-                , viewRestartButton
-                ]
+            row [] [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString winner ], viewRestartButton]
+            |> containerize
 
         Draw ->
-            row []
-                [ viewSvgbox [ Svg.text "It's a Draw" ]
-                , viewRestartButton
-                ]
+            containerize (row [] [ viewSvgbox [ Svg.text "It's a Draw" ], viewRestartButton])
+            
 
         GameInProgress activeplayer selectedGamepiece ->
             case selectedGamepiece of
@@ -667,6 +678,7 @@ viewGamestatus gamestatus =
                         , viewGamepiece gamepiece
                         , text <| "Active Player: " ++ playerToString activeplayer
                         ]
+                    |> containerize
 
                 NoPieceSelected ->
                     row []
@@ -674,6 +686,7 @@ viewGamestatus gamestatus =
                             [ Svg.rect [ Attr.width "60", Attr.height "60", Attr.fill "none" ] [] ]
                         , text <| "Active Player: " ++ playerToString activeplayer
                         ]
+                    |> containerize
 
 
 viewCell : Cell -> Element Msg
@@ -701,10 +714,18 @@ viewRestartButton =
         { onPress = Just ClickedRestartGameButton, label = text "Restart" }
 
 
+
+
 viewBoard : CellBoard -> Element Msg
 viewBoard cellboard =
+<<<<<<< HEAD
     column [ centerX, Region.announce ]
         [ row [] <| List.map viewCellButton [ cellboard.a1, cellboard.b1, cellboard.c1, cellboard.d1 ]
+=======
+    column [ centerX ]
+        [  el [ Font.center, width fill ] (text "GameBoard")
+        , row [] <| List.map viewCellButton [ cellboard.a1, cellboard.b1, cellboard.c1, cellboard.d1 ]
+>>>>>>> main
         , row [] <| List.map viewCellButton [ cellboard.a2, cellboard.b2, cellboard.c2, cellboard.d2 ]
         , row [] <| List.map viewCellButton [ cellboard.a3, cellboard.b3, cellboard.c3, cellboard.d3 ]
         , row [] <| List.map viewCellButton [ cellboard.a4, cellboard.b4, cellboard.c4, cellboard.d4 ]
