@@ -718,14 +718,9 @@ viewRestartButton =
 
 viewBoard : CellBoard -> Element Msg
 viewBoard cellboard =
-<<<<<<< HEAD
-    column [ centerX, Region.announce ]
-        [ row [] <| List.map viewCellButton [ cellboard.a1, cellboard.b1, cellboard.c1, cellboard.d1 ]
-=======
     column [ centerX ]
         [  el [ Font.center, width fill ] (text "GameBoard")
         , row [] <| List.map viewCellButton [ cellboard.a1, cellboard.b1, cellboard.c1, cellboard.d1 ]
->>>>>>> main
         , row [] <| List.map viewCellButton [ cellboard.a2, cellboard.b2, cellboard.c2, cellboard.d2 ]
         , row [] <| List.map viewCellButton [ cellboard.a3, cellboard.b3, cellboard.c3, cellboard.d3 ]
         , row [] <| List.map viewCellButton [ cellboard.a4, cellboard.b4, cellboard.c4, cellboard.d4 ]
