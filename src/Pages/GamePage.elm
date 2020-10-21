@@ -629,7 +629,7 @@ view : Model -> Document Msg
 view model =
     { title = "Quarto - Play"
     , body =
-        [ column [ spacing 10, centerX, Region.mainContent ]
+        [ column [ spacing 10, centerX ]
             [
               viewRemainingPieces model.remainingPieces
             , viewGamestatus model.gamestatus
