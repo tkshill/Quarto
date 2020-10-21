@@ -71,7 +71,7 @@ view :
 view { page } _ =
     { title = page.title
     , body =
-        [ column [ spacing 20, height fill, width fill ]
+        [ column [ spacing 20, height fill, width fill, Region.mainContent ]
             [ header
             , viewBody page.body
             ]
@@ -79,7 +79,7 @@ view { page } _ =
     }
 
 header: Element.Element msg
-header = row [ width fill, spacing 20, padding 20, Background.color Styles.blue ]
+header = row [ width fill, spacing 20, padding 20, Background.color Styles.blue, Region.navigation ]
                 [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
                 , link [ Font.color Styles.white ] { url = Route.toString Route.GamePage, label = text "Play!" }
                 ]
