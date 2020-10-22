@@ -25,7 +25,8 @@ import Spa.Url as Url
 import Styles
 import Svg exposing (Svg, svg)
 import Svg.Attributes as Attr
-
+import Task
+import Process
 
 page : Page Params Model Msg
 page =
@@ -310,6 +311,11 @@ playerToString player =
             p
 
 
+delay : Float -> msg -> Cmd msg
+delay time msg =
+  Process.sleep time
+  |> Task.perform (\_ -> msg)
+
 -- INIT
 
 initialCurrentTurn : CurrentTurn
@@ -383,10 +389,13 @@ init _ =
 -- Messages
 
 
+
+
 type Msg
     = SelectedAvilableGampiece Gamepiece
     | SelectedCellOnGameBoard Cell
     | ClickedRestartGameButton
+    | ComputerPlayerAction
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -404,6 +413,10 @@ update msg model =
             initModel
                 |> withCmd
 
+        ComputerPlayerAction ->
+            handleComputerAction model
+                |> withCmd
+
 
 
 -- Update Helpers
@@ -411,7 +424,36 @@ update msg model =
 
 withCmd : Model -> ( Model, Cmd Msg )
 withCmd model =
-    ( model, Cmd.none )
+    case model.player2 of
+        ComputerPlayer n ->
+            case model.gamestatus of
+                GameInProgress _ Player2Playing ->
+                    (model, delay (500) <| ComputerPlayerAction)
+                _ ->
+                    ( model, Cmd.none )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+
+handleComputerAction : Model -> Model
+handleComputerAction model =
+    case model.gamestatus of
+        GameInProgress _ Player1Selecting ->
+            Just (SelectedAvilableGampiece gamepiece)
+
+        GameInProgress _ Player2Selecting ->
+            Just (SelectedAvilableGampiece gamepiece)
+
+        GameInProgress selectedPiece Player1Playing ->
+            Just (SelectedCellOnGameBoard cell)
+
+        GameInProgress selectedPiece Player2Playing ->
+            Just (SelectedCellOnGameBoard cell)
+
+        _ -> (model)
+
 
 
 updateGamepiecePlaced : Cell -> Model -> Model
