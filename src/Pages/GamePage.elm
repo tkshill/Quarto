@@ -1,5 +1,6 @@
 module Pages.GamePage exposing
     ( Colour(..)
+    , Effect(..)
     , Gamepiece
     , Model
     , Msg
@@ -7,8 +8,12 @@ module Pages.GamePage exposing
     , Pattern(..)
     , Shape(..)
     , Size(..)
+    , initModel
     , matchingDimensions
     , page
+    , update
+    , view
+    , withNoEffects
     )
 
 import Element exposing (Element, centerX, column, el, fill, row, spacing, text, width)
@@ -16,6 +21,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import Element.Region as Region
 import List.Extra as Liste
 import Pages.NotFound exposing (Msg)
 import Set
@@ -30,8 +36,12 @@ import Svg.Attributes as Attr
 page : Page Params Model Msg
 page =
     Page.element
-        { init = init
-        , update = update
+        { init =
+            \params ->
+                init params |> Tuple.mapSecond perform
+        , update =
+            \msg model ->
+                update msg model |> Tuple.mapSecond perform
         , view = view
         , subscriptions = subscriptions
         }
@@ -227,6 +237,14 @@ gamepieceToList { shape, colour, pattern, size } =
     ]
 
 
+gamepieceToString : Gamepiece -> String
+gamepieceToString gamepiece =
+    gamepiece
+        |> gamepieceToList
+        |> List.intersperse " "
+        |> String.concat
+
+
 
 -- Cell Name Helpers
 
@@ -367,14 +385,13 @@ type alias Params =
     ()
 
 
-init : Url.Url Params -> ( Model, Cmd Msg )
+init : Url.Url Params -> ( Model, Effect )
 init _ =
-    initModel |> withCmd
+    ( initModel, NoEffect )
 
 
 
 -- UPDATE
--- Messages
 
 
 type Msg
@@ -383,59 +400,69 @@ type Msg
     | ClickedRestartGameButton
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+type Effect
+    = NoEffect
+
+
+update : Msg -> Model -> ( Model, Effect )
 update msg model =
     case msg of
         ClickedAvilableGampiece gamepiece ->
             updateSelectingGamepiece gamepiece model
-                |> withCmd
+                |> withNoEffects
 
         ClickedCellOnGameBoard cell ->
             updateGamepiecePlaced cell model
-                |> withCmd
+                |> withNoEffects
 
         ClickedRestartGameButton ->
-            initModel
-                |> withCmd
+            initModel |> withNoEffects
 
 
 
 -- Update Helpers
 
 
-withCmd : Model -> ( Model, Cmd Msg )
-withCmd model =
-    ( model, Cmd.none )
+withEffect : Effect -> Model -> ( Model, Effect )
+withEffect effect model =
+    ( model, effect )
+
+
+withNoEffects : Model -> ( Model, Effect )
+withNoEffects =
+    withEffect NoEffect
+
+
+perform : Effect -> Cmd Msg
+perform effect =
+    case effect of
+        NoEffect ->
+            Cmd.none
 
 
 updateGamepiecePlaced : Cell -> Model -> Model
-updateGamepiecePlaced { cellname, cellstate } model =
-    case model.gamestatus of
-        GameInProgress player selectedPiece ->
-            case ( selectedPiece, cellstate ) of
-                ( Selected gamepiece, EmptyCell ) ->
-                    let
-                        newBoard =
-                            updateCellBoard cellname gamepiece model.board
+updateGamepiecePlaced { cellname, cellstate } ({ board, remainingPieces, gamestatus } as model) =
+    case ( gamestatus, cellstate ) of
+        ( GameInProgress player (Selected gamepiece), EmptyCell ) ->
+            let
+                newBoard =
+                    updateCellBoard cellname gamepiece board
 
-                        win =
-                            isWin newBoard
+                win =
+                    isWin newBoard
 
-                        remainingPieces =
-                            removeGamepieceFromRemaining gamepiece model.remainingPieces
-                    in
-                    case ( win, remainingPieces ) of
-                        ( True, _ ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon player }
+                newRemainingPieces =
+                    removeGamepieceFromRemaining gamepiece remainingPieces
+            in
+            case ( win, remainingPieces ) of
+                ( True, _ ) ->
+                    { board = newBoard, remainingPieces = newRemainingPieces, gamestatus = GameWon player }
 
-                        ( _, [] ) ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = Draw }
-
-                        _ ->
-                            { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameInProgress player NoPieceSelected }
+                ( _, [] ) ->
+                    { board = newBoard, remainingPieces = newRemainingPieces, gamestatus = Draw }
 
                 _ ->
-                    model
+                    { board = newBoard, remainingPieces = newRemainingPieces, gamestatus = GameInProgress player NoPieceSelected }
 
         _ ->
             model
@@ -603,34 +630,45 @@ view model =
     { title = "Quarto - Play"
     , body =
         [ column [ spacing 10, centerX ]
-            [ el [ Font.center, width fill ] (text "Remaining Pieces")
-            , column [ centerX ] <|
-                List.map (row [ centerX ]) <|
-                    Liste.greedyGroupsOf 4 <|
-                        List.map viewRemainingPiecesButton model.remainingPieces
-            , el [ Font.center, width fill ] (text "Game Status")
+            [
+              viewRemainingPieces model.remainingPieces
             , viewGamestatus model.gamestatus
-            , el [ Font.center, width fill ] (text "GameBoard")
             , viewBoard model.board
             ]
         ]
     }
 
+viewRemainingPieces: List Gamepiece -> Element Msg
+viewRemainingPieces remainingPieces = 
+
+    column [spacing 10, centerX] 
+    [             
+        el [ Font.center, width fill ] (text "Remaining Pieces")
+        , column [ centerX ] <|
+                List.map (row [ centerX ]) <|
+                    Liste.greedyGroupsOf 4 <|
+                        List.map viewRemainingPiecesButton remainingPieces]
+
+
+
+
 
 viewGamestatus : Gamestatus -> Element Msg
 viewGamestatus gamestatus =
+    let 
+
+        containerize : Element Msg -> Element Msg
+        containerize elem = column [] [ (el [ Font.center, width fill ] (text "Game Status")), elem ]
+
+    in
     case gamestatus of
         GameWon winner ->
-            row []
-                [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString winner ]
-                , viewRestartButton
-                ]
+            row [] [ viewSvgbox [ Svg.text <| "Winner: " ++ playerToString winner ], viewRestartButton]
+            |> containerize
 
         Draw ->
-            row []
-                [ viewSvgbox [ Svg.text "It's a Draw" ]
-                , viewRestartButton
-                ]
+            containerize (row [] [ viewSvgbox [ Svg.text "It's a Draw" ], viewRestartButton])
+            
 
         GameInProgress activeplayer selectedGamepiece ->
             case selectedGamepiece of
@@ -640,6 +678,7 @@ viewGamestatus gamestatus =
                         , viewGamepiece gamepiece
                         , text <| "Active Player: " ++ playerToString activeplayer
                         ]
+                    |> containerize
 
                 NoPieceSelected ->
                     row []
@@ -647,6 +686,7 @@ viewGamestatus gamestatus =
                             [ Svg.rect [ Attr.width "60", Attr.height "60", Attr.fill "none" ] [] ]
                         , text <| "Active Player: " ++ playerToString activeplayer
                         ]
+                    |> containerize
 
 
 viewCell : Cell -> Element Msg
@@ -662,7 +702,7 @@ viewCell { cellname, cellstate } =
 viewCellButton : Cell -> Element Msg
 viewCellButton cell =
     Input.button
-        [ Border.color Styles.blue, Border.width 5 ]
+        [ Border.color Styles.blue, Border.width 5, Region.description (cellStateToDescription cell) ]
         { onPress = Just (ClickedCellOnGameBoard cell)
         , label = viewCell cell
         }
@@ -674,10 +714,13 @@ viewRestartButton =
         { onPress = Just ClickedRestartGameButton, label = text "Restart" }
 
 
+
+
 viewBoard : CellBoard -> Element Msg
 viewBoard cellboard =
     column [ centerX ]
-        [ row [] <| List.map viewCellButton [ cellboard.a1, cellboard.b1, cellboard.c1, cellboard.d1 ]
+        [  el [ Font.center, width fill ] (text "GameBoard")
+        , row [] <| List.map viewCellButton [ cellboard.a1, cellboard.b1, cellboard.c1, cellboard.d1 ]
         , row [] <| List.map viewCellButton [ cellboard.a2, cellboard.b2, cellboard.c2, cellboard.d2 ]
         , row [] <| List.map viewCellButton [ cellboard.a3, cellboard.b3, cellboard.c3, cellboard.d3 ]
         , row [] <| List.map viewCellButton [ cellboard.a4, cellboard.b4, cellboard.c4, cellboard.d4 ]
@@ -689,8 +732,14 @@ viewRemainingPiecesButton gamepiece =
     let
         gamePieceImage =
             viewGamepiece gamepiece
+
+        ariaDescription =
+            gamepieceToString gamepiece
     in
-    Input.button [] { onPress = Just (ClickedAvilableGampiece gamepiece), label = gamePieceImage }
+    Input.button [ Region.description ariaDescription ]
+        { onPress = Just (ClickedAvilableGampiece gamepiece)
+        , label = gamePieceImage
+        }
 
 
 viewGamepiece : Gamepiece -> Element msg
@@ -698,6 +747,20 @@ viewGamepiece gamepiece =
     gamepiece
         |> makeGamepieceSvg
         |> (\singleSvg -> viewSvgbox [ singleSvg ])
+
+
+
+-- Description helper functions
+
+
+cellStateToDescription : Cell -> String
+cellStateToDescription { cellname, cellstate } =
+    case cellstate of
+        EmptyCell ->
+            "Cell " ++ cellnameToString cellname ++ ": Empty cell"
+
+        Occupied gamepiece ->
+            "Cell " ++ cellnameToString cellname ++ ": " ++ gamepieceToString gamepiece
 
 
 

@@ -32,7 +32,7 @@ page =
 
 view : Url Params -> Document Msg
 view _ =
-    { title = "Homepage"
+    { title = "Quarto"
     , body =
         [ el [ centerX, centerY, padding 25 ] <|
             Element.column [ Font.center, centerX, padding 50 ]
