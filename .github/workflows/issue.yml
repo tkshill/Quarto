@@ -1,0 +1,22 @@
+# This workflow posts an automated comment on every new issue
+
+# https://github.com/marketplace/actions/create-or-update-comment (https://github.com/peter-evans/create-or-update-comment)
+
+name: Automatic Comment
+on:
+  issues:
+    types: [opened]
+jobs:
+  comment:
+    name: Comment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Automatic Comment
+        uses: peter-evans/create-or-update-comment@v1
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            Thank you for the issue! We'll take your request into consideration and will follow up soon if we decide to tackle this issue.
+            To all contributors: any issue that is labeled `Status: Available` is up for grabs.
+            To claim an issue to work on, please leave a comment. If you've claimed the issue and need help, please leave a comment letting us know and we can schedule some time to help.
+            For full info on how to contribute, please check out our [contributors guide](https://github.com/tkshill/quarto/blob/CONTRIBUTING.md).

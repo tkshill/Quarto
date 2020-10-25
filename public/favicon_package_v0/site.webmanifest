@@ -1,6 +1,7 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Elm Quarto",
+    "short_name": "Elm Quarto",
+    "description": "Functional and accessible web app based on the popular (and highly entertaining) board game Quarto.",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
@@ -13,7 +14,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#ffffff",
+    "theme_color": "#000000",
     "background_color": "#ffffff",
     "display": "standalone"
 }
