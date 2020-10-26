@@ -513,16 +513,16 @@ updateGamepiecePlaced { cellname, cellstate } ({ board, remainingPieces, gamesta
             in
             case ( win, remainingPieces, currentTurn) of
                 ( True, _, Player1Playing ) ->
-                    { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon model.player1 }
+                    { model | board = newBoard, remainingPieces = newRemainingPieces, gamestatus = GameWon model.player1 }
 
                 ( True, _, Player2Playing ) ->
-                    { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameWon model.player2 }
+                    { model | board = newBoard, remainingPieces = newRemainingPieces, gamestatus = GameWon model.player2 }
 
                 ( _, [], _ ) ->
-                    { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = Draw }
+                    { model | board = newBoard, remainingPieces = newRemainingPieces, gamestatus = Draw }
 
                 _ ->
-                    { model | board = newBoard, remainingPieces = remainingPieces, gamestatus = GameInProgress NoPieceSelected newCurrentTurn }
+                    { model | board = newBoard, remainingPieces = newRemainingPieces, gamestatus = GameInProgress NoPieceSelected newCurrentTurn }
 
 
         _ ->
