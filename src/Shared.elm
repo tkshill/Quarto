@@ -100,4 +100,4 @@ body listy =
 footer : Element msg
 footer =
     row [ width fill, spacing 20, padding 20, Background.color Styles.black ]
-        [ newTabLink [ Font.color Styles.white, centerX ] { url = "https://github.com/tkshill/Quarto", label = text "GitHub Repository" } ]
+        [ newTabLink [ Font.color Styles.white, centerX ] { url = "https://github.com/tkshill/Quarto", label = text "Checkout the GitHub Repository!" } ]
