@@ -12,6 +12,7 @@ import Browser.Navigation exposing (Key)
 import Element exposing (Element, centerX, column, fill, height, link, newTabLink, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Font as Font
+import Element.Region as Region
 import Html exposing (b)
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
@@ -71,7 +72,7 @@ view :
 view { page } _ =
     { title = page.title
     , body =
-        [ column [ spacing 20, height fill, width fill ]
+        [ column [ spacing 20, height fill, width fill, Region.mainContent ]
             [ header
             , body page.body
             , footer
@@ -82,7 +83,7 @@ view { page } _ =
 
 header : Element msg
 header =
-    row [ width fill, spacing 20, padding 20, Background.color Styles.blue ]
+    row [ width fill, spacing 20, padding 20, Background.color Styles.blue, Region.navigation ]
         [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
         , link [ Font.color Styles.white ] { url = Route.toString Route.GamePage, label = text "Play!" }
         ]
