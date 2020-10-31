@@ -9,9 +9,11 @@ module Shared exposing
     )
 
 import Browser.Navigation exposing (Key)
-import Element exposing (centerX, column, fill, height, link, padding, row, spacing, text, width)
+import Element exposing (Element, centerX, column, fill, height, link, newTabLink, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Font as Font
+import Element.Region as Region
+import Html exposing (b)
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
 import Styles
@@ -70,19 +72,33 @@ view :
 view { page } _ =
     { title = page.title
     , body =
-        [ column [ spacing 20, height fill, width fill ]
+        [ column [ spacing 20, height fill, width fill, Region.mainContent ]
             [ header
-            , viewBody page.body
+            , body page.body
+            , footer
             ]
         ]
     }
 
-header: Element.Element msg
-header = row [ width fill, spacing 20, padding 20, Background.color Styles.blue ]
-                [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
-                , link [ Font.color Styles.white ] { url = Route.toString Route.GamePage, label = text "Play!" }
-                ]
+
+header : Element msg
+header =
+    row [ width fill, spacing 20, padding 20, Background.color Styles.blue, Region.navigation ]
+        [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
+        , link [ Font.color Styles.white ] { url = Route.toString Route.GamePage, label = text "Play!" }
+        ]
 
 
-viewBody: List (Element.Element msg)  -> Element.Element msg
-viewBody listy = column [ height fill, centerX ] listy
+body : List (Element msg) -> Element msg
+body listy =
+    column [ height fill, centerX ] listy
+
+
+
+-- remember to change github link to image
+
+
+footer : Element msg
+footer =
+    row [ width fill, spacing 20, padding 20, Background.color Styles.black ]
+        [ newTabLink [ Font.color Styles.white, centerX ] { url = "https://github.com/tkshill/Quarto", label = text "Checkout the GitHub Repository!" } ]
