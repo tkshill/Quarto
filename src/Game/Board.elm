@@ -1,4 +1,4 @@
-module Game.Model exposing
+module Game.Board exposing
     ( BoardState
     , Cellname(..)
     , ChosenPiece
@@ -16,6 +16,7 @@ module Game.Model exposing
     , isWin
     , playedPieces
     , unPlayedPieces
+    , updateBoard
     )
 
 import Dict exposing (Dict)
@@ -425,6 +426,20 @@ initialModel =
     { board = initialBoard
     , status = initialGamestatus
     }
+
+
+updateBoard : Cellname -> Gamepiece -> BoardState -> BoardState
+updateBoard name gamepiece board =
+    if
+        List.any ((==) { status = Unplayed, gamepiece = gamepiece }) board
+            && not (List.any (\ps -> ps.status == Played name) board)
+    then
+        board
+            |> List.filter ((/=) { status = Unplayed, gamepiece = gamepiece })
+            |> (::) { status = Played name, gamepiece = gamepiece }
+
+    else
+        board
 
 
 
