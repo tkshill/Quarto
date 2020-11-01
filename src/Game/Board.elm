@@ -426,7 +426,3 @@ availableCells board =
     in
     names
         |> List.filter (\name -> List.any ((==) name) taken)
-
-
-
---
