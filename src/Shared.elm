@@ -13,7 +13,6 @@ import Element exposing (Element, centerX, column, fill, height, link, newTabLin
 import Element.Background as Background
 import Element.Font as Font
 import Element.Region as Region
-import Html exposing (b)
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
 import Styles
@@ -84,8 +83,7 @@ view { page } _ =
 header : Element msg
 header =
     row [ width fill, spacing 20, padding 20, Background.color Styles.blue, Region.navigation ]
-        [ link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
-        , link [ Font.color Styles.white ] { url = Route.toString Route.GamePage, label = text "Play!" }
+        [--link [ Font.color Styles.white ] { url = Route.toString Route.Top, label = text "Home" }
         ]
 
 
