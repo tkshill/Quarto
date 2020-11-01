@@ -3,17 +3,17 @@ module Game.Board exposing
     , Cellname(..)
     , ChosenPiece
     , Colour(..)
-    , Gamestatus
-    , Model
+    , Gamepiece
     , Pattern(..)
     , PlayedPieces
     , RemainingPieces
     , Shape(..)
     , Size(..)
-    , Turn
-    , Winner
-    , initialModel
+    , availableCells
+    , gamepieceToList
+    , initialBoard
     , isWin
+    , nameToString
     , playedPieces
     , unPlayedPieces
     , updateBoard
@@ -202,6 +202,11 @@ type Cellname
     | D4
 
 
+names : List Cellname
+names =
+    [ A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3, C4, D1, D2, D3, D4 ]
+
+
 winningNames : List (FourOf Cellname)
 winningNames =
     [ FourOf { first = A1, second = A2, third = A3, fourth = A4 }
@@ -375,37 +380,6 @@ type alias ChosenPiece =
     Gamepiece
 
 
-type Turn
-    = HumanChoosing
-    | ComputerPlaying ChosenPiece
-    | ComputerChoosing
-    | HumanPlaying ChosenPiece
-
-
-type alias Winner =
-    String
-
-
-
--- GAMESTATUS
-
-
-type Gamestatus
-    = InPlay Turn
-    | Won Winner
-    | Draw
-
-
-
--- MODEL
-
-
-type alias Model =
-    { board : BoardState
-    , status : Gamestatus
-    }
-
-
 
 -- INIT
 
@@ -416,16 +390,8 @@ initialBoard =
         |> List.map (PieceState Unplayed)
 
 
-initialGamestatus : Gamestatus
-initialGamestatus =
-    InPlay HumanChoosing
 
-
-initialModel : Model
-initialModel =
-    { board = initialBoard
-    , status = initialGamestatus
-    }
+-- UPDATE
 
 
 updateBoard : Cellname -> Gamepiece -> BoardState -> BoardState
@@ -440,6 +406,26 @@ updateBoard name gamepiece board =
 
     else
         board
+
+
+tryPieceStateToName : PieceState -> Maybe Cellname
+tryPieceStateToName ps =
+    case ps.status of
+        Played name ->
+            Just name
+
+        Unplayed ->
+            Nothing
+
+
+availableCells : BoardState -> List Cellname
+availableCells board =
+    let
+        taken =
+            List.filterMap tryPieceStateToName board
+    in
+    names
+        |> List.filter (\name -> List.any ((==) name) taken)
 
 
 
