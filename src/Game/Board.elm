@@ -1,19 +1,18 @@
 module Game.Board exposing
     ( BoardState
     , Cellname(..)
-    , ChosenPiece
     , Colour(..)
     , Gamepiece
     , Pattern(..)
     , PlayedPieces
-    , RemainingPieces
     , Shape(..)
     , Size(..)
     , availableCells
-    , gamepieceToList
+    , boardStatus
+    , hasMatch
     , initialBoard
-    , isWin
     , nameToString
+    , pieceToString
     , playedPieces
     , unPlayedPieces
     , updateBoard
@@ -25,7 +24,7 @@ import Set
 
 
 
--- SHAPE
+-- Domain
 
 
 type Shape
@@ -33,47 +32,9 @@ type Shape
     | Circle
 
 
-shapes : List Shape
-shapes =
-    [ Square, Circle ]
-
-
-shapeToString : Shape -> String
-shapeToString shape =
-    case shape of
-        Square ->
-            "Square"
-
-        Circle ->
-            "Circle"
-
-
-
--- COLOUR
-
-
 type Colour
     = Colour1
     | Colour2
-
-
-colours : List Colour
-colours =
-    [ Colour1, Colour2 ]
-
-
-colourToString : Colour -> String
-colourToString colour =
-    case colour of
-        Colour1 ->
-            "Colour1"
-
-        Colour2 ->
-            "Colour2"
-
-
-
--- PATTERN
 
 
 type Pattern
@@ -81,47 +42,9 @@ type Pattern
     | Hollow
 
 
-patterns : List Pattern
-patterns =
-    [ Solid, Hollow ]
-
-
-patternToString : Pattern -> String
-patternToString pattern =
-    case pattern of
-        Solid ->
-            "Solid"
-
-        Hollow ->
-            "Hollow"
-
-
-
--- SIZE
-
-
 type Size
     = Small
     | Large
-
-
-sizes : List Size
-sizes =
-    [ Small, Large ]
-
-
-sizeToString : Size -> String
-sizeToString size =
-    case size of
-        Small ->
-            "Small"
-
-        Large ->
-            "Large"
-
-
-
--- GAMEPIECE
 
 
 type alias Gamepiece =
@@ -132,25 +55,8 @@ type alias Gamepiece =
     }
 
 
-gamepieceToList : Gamepiece -> List String
-gamepieceToList { shape, colour, pattern, size } =
-    [ shapeToString shape
-    , colourToString colour
-    , patternToString pattern
-    , sizeToString size
-    ]
-
-
-type alias RemainingPieces =
-    List Gamepiece
-
-
 type alias PlayedPieces =
     Dict String Gamepiece
-
-
-
--- WINNING COMBINATION
 
 
 type FourOf a
@@ -160,27 +66,6 @@ type FourOf a
         , third : a
         , fourth : a
         }
-
-
-fourOf : a -> a -> a -> a -> FourOf a
-fourOf a b c d =
-    FourOf { first = a, second = b, third = c, fourth = d }
-
-
-isMatchingFourOf : FourOf Gamepiece -> Bool
-isMatchingFourOf (FourOf { first, second, third, fourth }) =
-    let
-        firstSet =
-            (gamepieceToList >> Set.fromList) first
-    in
-    [ second, third, fourth ]
-        |> List.map (gamepieceToList >> Set.fromList)
-        |> List.foldl Set.intersect firstSet
-        |> (not << Set.isEmpty)
-
-
-
--- CELLNAME
 
 
 type Cellname
@@ -202,34 +87,121 @@ type Cellname
     | D4
 
 
-names : List Cellname
-names =
-    [ A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3, C4, D1, D2, D3, D4 ]
+type alias GameCell =
+    ( Cellname, Gamepiece )
 
 
-winningNames : List (FourOf Cellname)
-winningNames =
-    [ FourOf { first = A1, second = A2, third = A3, fourth = A4 }
-    , FourOf { first = B1, second = B2, third = B3, fourth = B4 }
-    , FourOf { first = C1, second = C2, third = C3, fourth = C4 }
-    , FourOf { first = D1, second = D2, third = D3, fourth = D4 }
-    , FourOf { first = A1, second = B1, third = C1, fourth = D1 }
-    , FourOf { first = A2, second = B2, third = C2, fourth = D2 }
-    , FourOf { first = A3, second = B3, third = C3, fourth = D3 }
-    , FourOf { first = A4, second = B4, third = C4, fourth = D4 }
-    , FourOf { first = A1, second = B2, third = C3, fourth = D4 }
-    , FourOf { first = A4, second = B3, third = C2, fourth = D1 }
+type PieceStatus
+    = Unplayed
+    | Played Cellname
+
+
+type alias PieceState =
+    { status : PieceStatus
+    , gamepiece : Gamepiece
+    }
+
+
+type alias BoardState =
+    List PieceState
+
+
+type BoardStatus
+    = MatchFound
+    | Full
+    | CanContinue
+
+
+
+-- HELPERS
+
+
+shapes : List Shape
+shapes =
+    [ Square, Circle ]
+
+
+colours : List Colour
+colours =
+    [ Colour1, Colour2 ]
+
+
+patterns : List Pattern
+patterns =
+    [ Solid, Hollow ]
+
+
+sizes : List Size
+sizes =
+    [ Small, Large ]
+
+
+pieceToList : Gamepiece -> List String
+pieceToList { shape, colour, pattern, size } =
+    [ shapeToString shape
+    , colourToString colour
+    , patternToString pattern
+    , sizeToString size
     ]
 
 
-fourOfNameToString : FourOf Cellname -> FourOf String
-fourOfNameToString (FourOf { first, second, third, fourth }) =
-    FourOf
-        { first = nameToString first
-        , second = nameToString second
-        , third = nameToString third
-        , fourth = nameToString fourth
-        }
+fourOf : a -> a -> a -> a -> FourOf a
+fourOf a b c d =
+    FourOf { first = a, second = b, third = c, fourth = d }
+
+
+mapFourOf : (a -> b) -> FourOf a -> FourOf b
+mapFourOf f (FourOf { first, second, third, fourth }) =
+    fourOf (f first) (f second) (f third) (f fourth)
+
+
+allNames : List Cellname
+allNames =
+    [ A1, A2, A3, A4, B1, B2, B3, B4, C1, C2, C3, C4, D1, D2, D3, D4 ]
+
+
+
+-- STRINGS
+
+
+shapeToString : Shape -> String
+shapeToString shape =
+    case shape of
+        Square ->
+            "Square"
+
+        Circle ->
+            "Circle"
+
+
+colourToString : Colour -> String
+colourToString colour =
+    case colour of
+        Colour1 ->
+            "Colour1"
+
+        Colour2 ->
+            "Colour2"
+
+
+patternToString : Pattern -> String
+patternToString pattern =
+    case pattern of
+        Solid ->
+            "Solid"
+
+        Hollow ->
+            "Hollow"
+
+
+sizeToString : Size -> String
+sizeToString size =
+    case size of
+        Small ->
+            "Small"
+
+        Large ->
+            "Large"
 
 
 nameToString : Cellname -> String
@@ -284,26 +256,37 @@ nameToString name =
             "D4"
 
 
-
--- GAMECELL
-
-
-type alias GameCell =
-    ( Cellname, Gamepiece )
-
-
-dictUpdate : GameCell -> PlayedPieces -> PlayedPieces
-dictUpdate ( name, piece ) dict =
-    Dict.insert (nameToString name) piece dict
+pieceToString : Gamepiece -> String
+pieceToString gamepiece =
+    gamepiece
+        |> pieceToList
+        |> List.intersperse " "
+        |> String.concat
 
 
 
--- PIECE STATUS
+-- Played pieces and Unplayed Pieces
 
 
-type PieceStatus
-    = Unplayed
-    | Played Cellname
+playedPieces : BoardState -> PlayedPieces
+playedPieces boardstate =
+    boardstate
+        |> List.filterMap tryPieceStateToCell
+        |> List.foldl dictUpdate Dict.empty
+
+
+unPlayedPieces : BoardState -> List Gamepiece
+unPlayedPieces boardstate =
+    boardstate
+        |> List.filter (.status >> (==) Unplayed)
+        |> List.map .gamepiece
+
+
+tryPieceStateToCell : PieceState -> Maybe GameCell
+tryPieceStateToCell pstate =
+    pstate.status
+        |> tryPieceCellname
+        |> Maybe.map (\name -> ( name, pstate.gamepiece ))
 
 
 tryPieceCellname : PieceStatus -> Maybe Cellname
@@ -316,68 +299,9 @@ tryPieceCellname status =
             Just name
 
 
-
--- PIECE STATE
-
-
-type alias PieceState =
-    { status : PieceStatus
-    , gamepiece : Gamepiece
-    }
-
-
-tryPieceStateToCell : PieceState -> Maybe GameCell
-tryPieceStateToCell pstate =
-    pstate.status
-        |> tryPieceCellname
-        |> Maybe.map (\name -> ( name, pstate.gamepiece ))
-
-
-
--- BOARDSTATE
-
-
-type alias BoardState =
-    List PieceState
-
-
-playedPieces : BoardState -> PlayedPieces
-playedPieces boardstate =
-    boardstate
-        |> List.filterMap tryPieceStateToCell
-        |> List.foldl dictUpdate Dict.empty
-
-
-unPlayedPieces : BoardState -> RemainingPieces
-unPlayedPieces boardstate =
-    boardstate
-        |> List.filter (.status >> (==) Unplayed)
-        |> List.map .gamepiece
-
-
-playedPiecesToCombos : PlayedPieces -> FourOf Cellname -> Maybe (FourOf Gamepiece)
-playedPiecesToCombos pieces winningCells =
-    let
-        get s =
-            Dict.get s pieces
-    in
-    winningCells
-        |> fourOfNameToString
-        |> (\(FourOf s) -> Maybe.map4 fourOf (get s.first) (get s.second) (get s.third) (get s.fourth))
-
-
-isWin : BoardState -> Bool
-isWin board =
-    board
-        |> playedPieces
-        |> (\pieces -> List.map (playedPiecesToCombos pieces) winningNames)
-        |> List.filterMap identity
-        |> List.filter isMatchingFourOf
-        |> (not << List.isEmpty)
-
-
-type alias ChosenPiece =
-    Gamepiece
+dictUpdate : GameCell -> PlayedPieces -> PlayedPieces
+dictUpdate ( name, piece ) dict =
+    Dict.insert (nameToString name) piece dict
 
 
 
@@ -396,16 +320,17 @@ initialBoard =
 
 updateBoard : Cellname -> Gamepiece -> BoardState -> BoardState
 updateBoard name gamepiece board =
-    if
-        List.any ((==) { status = Unplayed, gamepiece = gamepiece }) board
-            && not (List.any (\ps -> ps.status == Played name) board)
-    then
-        board
-            |> List.filter ((/=) { status = Unplayed, gamepiece = gamepiece })
-            |> (::) { status = Played name, gamepiece = gamepiece }
+    let
+        pieceUnplayed =
+            { status = Unplayed, gamepiece = gamepiece }
 
-    else
-        board
+        piecePlayed =
+            { status = Played name, gamepiece = gamepiece }
+
+        nameIsUnused =
+            List.member name (availableCells board)
+    in
+    Liste.setIf (\piece -> (piece == pieceUnplayed) && nameIsUnused) piecePlayed board
 
 
 tryPieceStateToName : PieceState -> Maybe Cellname
@@ -424,5 +349,74 @@ availableCells board =
         taken =
             List.filterMap tryPieceStateToName board
     in
-    names
-        |> List.filter (\name -> List.any ((==) name) taken)
+    allNames
+        |> Liste.filterNot (\name -> List.member name taken)
+
+
+
+-- BOARD status
+
+
+boardStatus : BoardState -> BoardStatus
+boardStatus board =
+    if hasMatch board then
+        MatchFound
+
+    else if isFull board then
+        Full
+
+    else
+        CanContinue
+
+
+isFull : BoardState -> Bool
+isFull board =
+    board |> unPlayedPieces |> List.isEmpty
+
+
+hasMatch : BoardState -> Bool
+hasMatch board =
+    board
+        |> playedPieces
+        |> (\pieces -> List.map (playedPiecesToCombos pieces) allWinningNames)
+        |> List.filterMap identity
+        |> List.filter isMatchingFourOf
+        |> (not << List.isEmpty)
+
+
+allWinningNames : List (FourOf Cellname)
+allWinningNames =
+    [ fourOf A1 A2 A3 A4
+    , fourOf B1 B2 B3 B4
+    , fourOf C1 C2 C3 C4
+    , fourOf D1 D2 D3 D4
+    , fourOf A1 B1 C1 D1
+    , fourOf A2 B2 C2 D2
+    , fourOf A3 B3 C3 D3
+    , fourOf A4 B4 C4 D4
+    , fourOf A1 B2 C3 D4
+    , fourOf A4 B3 C2 D1
+    ]
+
+
+isMatchingFourOf : FourOf Gamepiece -> Bool
+isMatchingFourOf (FourOf { first, second, third, fourth }) =
+    let
+        firstSet =
+            (pieceToList >> Set.fromList) first
+    in
+    [ second, third, fourth ]
+        |> List.map (pieceToList >> Set.fromList)
+        |> List.foldl Set.intersect firstSet
+        |> (not << Set.isEmpty)
+
+
+playedPiecesToCombos : PlayedPieces -> FourOf Cellname -> Maybe (FourOf Gamepiece)
+playedPiecesToCombos pieces winningNames =
+    let
+        get s =
+            Dict.get s pieces
+    in
+    winningNames
+        |> mapFourOf nameToString
+        |> (\(FourOf s) -> Maybe.map4 fourOf (get s.first) (get s.second) (get s.third) (get s.fourth))

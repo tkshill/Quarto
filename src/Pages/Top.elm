@@ -54,7 +54,7 @@ page =
         }
 
 
-type alias SelectedPiece =
+type alias ChosenPiece =
     Gamepiece
 
 
@@ -81,9 +81,9 @@ toCell name pieces =
 
 type Turn
     = HumanChoosing
-    | ComputerPlaying SelectedPiece
+    | ComputerPlaying ChosenPiece
     | ComputerChoosing
-    | HumanPlaying SelectedPiece
+    | HumanPlaying ChosenPiece
 
 
 type alias Winner =
@@ -100,14 +100,6 @@ type alias Model =
     { board : BoardState
     , status : Gamestatus
     }
-
-
-gamepieceToString : Gamepiece -> String
-gamepieceToString gamepiece =
-    gamepiece
-        |> Board.gamepieceToList
-        |> List.intersperse " "
-        |> String.concat
 
 
 
@@ -237,7 +229,7 @@ updateGamepiecePlaced gamepiece model name =
 
 checkForWin : Turn -> Model -> ( Model, Effect )
 checkForWin turn model =
-    case ( turn, Board.isWin model.board ) of
+    case ( turn, Board.hasMatch model.board ) of
         ( _, True ) ->
             { model | status = Won (turnToActivePlayer turn) }
                 |> withNoEffects
@@ -418,7 +410,7 @@ viewRemainingPiecesButton gamepiece =
             viewGamepiece gamepiece
 
         ariaDescription =
-            gamepieceToString gamepiece
+            Board.pieceToString gamepiece
     in
     Input.button [ Region.description ariaDescription ]
         { onPress = Just (ClickedPiece gamepiece)
@@ -444,7 +436,7 @@ cellStateToDescription { name, state } =
             "Cell " ++ Board.nameToString name ++ ": Empty cell"
 
         Occupied gamepiece ->
-            "Cell " ++ Board.nameToString name ++ ": " ++ gamepieceToString gamepiece
+            "Cell " ++ Board.nameToString name ++ ": " ++ Board.pieceToString gamepiece
 
 
 
