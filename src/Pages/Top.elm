@@ -1,31 +1,36 @@
 module Pages.Top exposing
-    ( Colour(..)
-    , Effect(..)
-    , Gamepiece
+    ( Effect(..)
     , Model
     , Msg
     , Params
-    , Pattern(..)
-    , Shape(..)
-    , Size(..)
     , initModel
-    , matchingDimensions
     , page
     , update
     , view
     , withNoEffects
     )
 
+import Dict
 import Element exposing (Element, centerX, column, el, fill, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Element.Region as Region
+import Game.Board as Board
+    exposing
+        ( BoardState
+        , Cellname(..)
+        , Colour(..)
+        , Gamepiece
+        , Pattern(..)
+        , PlayedPieces
+        , Shape(..)
+        , Size(..)
+        )
 import List.Extra as Liste
 import Pages.NotFound exposing (Msg)
 import Process
-import Set
 import Spa.Document exposing (Document)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url
@@ -49,97 +54,36 @@ page =
         }
 
 
-
--- DOMAIN
-
-
-type Shape
-    = Square
-    | Circle
+type alias ChosenPiece =
+    Gamepiece
 
 
-type Colour
-    = Colour1
-    | Colour2
-
-
-type Pattern
-    = Solid
-    | Hollow
-
-
-type Size
-    = Small
-    | Large
-
-
-type alias Gamepiece =
-    { shape : Shape
-    , colour : Colour
-    , pattern : Pattern
-    , size : Size
-    }
-
-
-type Cellname
-    = A1
-    | B1
-    | C1
-    | D1
-    | A2
-    | B2
-    | C2
-    | D2
-    | A3
-    | B3
-    | C3
-    | D3
-    | A4
-    | B4
-    | C4
-    | D4
-
-
-type Cellstate
+type Cellstatus
     = EmptyCell
     | Occupied Gamepiece
 
 
 type alias Cell =
-    { cellname : Cellname
-    , cellstate : Cellstate
+    { name : Cellname
+    , state : Cellstatus
     }
 
 
-type alias CellBoard =
-    { a1 : Cell
-    , a2 : Cell
-    , a3 : Cell
-    , a4 : Cell
-    , b1 : Cell
-    , b2 : Cell
-    , b3 : Cell
-    , b4 : Cell
-    , c1 : Cell
-    , c2 : Cell
-    , c3 : Cell
-    , c4 : Cell
-    , d1 : Cell
-    , d2 : Cell
-    , d3 : Cell
-    , d4 : Cell
-    }
+toCell : Cellname -> PlayedPieces -> Cell
+toCell name pieces =
+    case Dict.get (Board.nameToString name) pieces of
+        Just gamepiece ->
+            Cell name (Occupied gamepiece)
+
+        Nothing ->
+            Cell name EmptyCell
 
 
-type alias SelectedPiece =
-    Gamepiece
-
-
-type CurrentTurn
-    = HumanSelecting
-    | ComputerPlaying SelectedPiece
-    | ComputerSelecting
-    | HumanPlaying SelectedPiece
+type Turn
+    = HumanChoosing
+    | ComputerPlaying ChosenPiece
+    | ComputerChoosing
+    | HumanPlaying ChosenPiece
 
 
 type alias Winner =
@@ -147,187 +91,32 @@ type alias Winner =
 
 
 type Gamestatus
-    = GameInProgress CurrentTurn
-    | GameWon Winner
+    = InPlay Turn
+    | Won Winner
     | Draw
 
 
 type alias Model =
-    { board : CellBoard
-    , remainingPieces : List Gamepiece
-    , gamestatus : Gamestatus
+    { board : BoardState
+    , status : Gamestatus
     }
 
 
 
--- Gamepiece Dimension helpers
-
-
-shapes : List Shape
-shapes =
-    [ Square, Circle ]
-
-
-shapeToString : Shape -> String
-shapeToString shape =
-    case shape of
-        Square ->
-            "Square"
-
-        Circle ->
-            "Circle"
-
-
-colours : List Colour
-colours =
-    [ Colour1, Colour2 ]
-
-
-colourToString : Colour -> String
-colourToString colour =
-    case colour of
-        Colour1 ->
-            "Colour1"
-
-        Colour2 ->
-            "Colour2"
-
-
-patterns : List Pattern
-patterns =
-    [ Solid, Hollow ]
-
-
-patternToString : Pattern -> String
-patternToString pattern =
-    case pattern of
-        Solid ->
-            "Solid"
-
-        Hollow ->
-            "Hollow"
-
-
-sizes : List Size
-sizes =
-    [ Small, Large ]
-
-
-sizeToString : Size -> String
-sizeToString size =
-    case size of
-        Small ->
-            "Small"
-
-        Large ->
-            "Large"
-
-
-
--- Gamepiece helpers
-
-
-gamepieceToList : Gamepiece -> List String
-gamepieceToList { shape, colour, pattern, size } =
-    [ shapeToString shape
-    , colourToString colour
-    , patternToString pattern
-    , sizeToString size
-    ]
-
-
-gamepieceToString : Gamepiece -> String
-gamepieceToString gamepiece =
-    gamepiece
-        |> gamepieceToList
-        |> List.intersperse " "
-        |> String.concat
-
-
-
 -- Cell Name Helpers
-
-
-cellnameToString : Cellname -> String
-cellnameToString name =
-    case name of
-        A1 ->
-            "A1"
-
-        A2 ->
-            "A2"
-
-        A3 ->
-            "A3"
-
-        A4 ->
-            "A4"
-
-        B1 ->
-            "B1"
-
-        B2 ->
-            "B2"
-
-        B3 ->
-            "B3"
-
-        B4 ->
-            "B4"
-
-        C1 ->
-            "C1"
-
-        C2 ->
-            "C2"
-
-        C3 ->
-            "C3"
-
-        C4 ->
-            "C4"
-
-        D1 ->
-            "D1"
-
-        D2 ->
-            "D2"
-
-        D3 ->
-            "D3"
-
-        D4 ->
-            "D4"
-
-
-
--- Cell helpers
-
-
-cellstateToMaybe : Cellstate -> Maybe Gamepiece
-cellstateToMaybe cellstate =
-    case cellstate of
-        Occupied gamepiece ->
-            Just gamepiece
-
-        EmptyCell ->
-            Nothing
-
-
-
 -- Turn helpers
 
 
-turnToActivePlayer : CurrentTurn -> String
+turnToActivePlayer : Turn -> String
 turnToActivePlayer turn =
     case turn of
-        HumanSelecting ->
+        HumanChoosing ->
             "Human Player"
 
         HumanPlaying _ ->
             "Human Player"
 
-        ComputerSelecting ->
+        ComputerChoosing ->
             "Computer Player"
 
         ComputerPlaying _ ->
@@ -338,46 +127,15 @@ turnToActivePlayer turn =
 -- INIT
 
 
-initialTurn : CurrentTurn
+initialTurn : Turn
 initialTurn =
-    HumanSelecting
-
-
-initialCells : CellBoard
-initialCells =
-    let
-        nameToCell name =
-            { cellname = name, cellstate = EmptyCell }
-    in
-    { a1 = nameToCell A1
-    , a2 = nameToCell A2
-    , a3 = nameToCell A3
-    , a4 = nameToCell A4
-    , b1 = nameToCell B1
-    , b2 = nameToCell B2
-    , b3 = nameToCell B3
-    , b4 = nameToCell B4
-    , c1 = nameToCell C1
-    , c2 = nameToCell C2
-    , c3 = nameToCell C3
-    , c4 = nameToCell C4
-    , d1 = nameToCell D1
-    , d2 = nameToCell D2
-    , d3 = nameToCell D3
-    , d4 = nameToCell D4
-    }
-
-
-initialPieces : List Gamepiece
-initialPieces =
-    Liste.lift4 Gamepiece shapes colours patterns sizes
+    HumanChoosing
 
 
 initModel : Model
 initModel =
-    { board = initialCells
-    , remainingPieces = initialPieces
-    , gamestatus = GameInProgress initialTurn
+    { board = Board.initialBoard
+    , status = InPlay initialTurn
     }
 
 
@@ -395,39 +153,41 @@ init _ =
 
 
 type Msg
-    = ClickedAvailableGampiece Gamepiece
-    | ClickedCellOnGameBoard Cell
-    | ClickedRestartGameButton
-    | HumanSelectedGamePiece
-    | ComputerPlayedGamePiece
+    = ClickedPiece Gamepiece
+    | ClickedGameboard Cell
+    | ClickedRestart
+    | HumanChosePiece
+    | ComputerPlayedPiece
 
 
 update : Msg -> Model -> ( Model, Effect )
 update msg model =
-    case ( msg, model.gamestatus ) of
-        ( ClickedAvailableGampiece gamepiece, GameInProgress HumanSelecting ) ->
-            { model | gamestatus = GameInProgress (ComputerPlaying gamepiece) }
-                |> withEffect (Delay 2 HumanSelectedGamePiece)
+    case ( msg, model.status ) of
+        ( ClickedPiece gamepiece, InPlay HumanChoosing ) ->
+            { model | status = InPlay (ComputerPlaying gamepiece) }
+                |> withEffect (Delay 2 HumanChosePiece)
 
-        ( HumanSelectedGamePiece, GameInProgress (ComputerPlaying gamepiece) ) ->
+        ( HumanChosePiece, InPlay (ComputerPlaying gamepiece) ) ->
             tryFindAvailableCells model.board
                 |> Maybe.map (updateGamepiecePlaced gamepiece model)
                 |> Maybe.map (checkForWin (ComputerPlaying gamepiece))
                 |> Maybe.withDefault (withNoEffects model)
 
-        ( ComputerPlayedGamePiece, GameInProgress ComputerSelecting ) ->
-            trySelectpiece model.remainingPieces
-                |> Maybe.map (\piece -> { model | gamestatus = GameInProgress (HumanPlaying piece) })
-                |> Maybe.withDefault { model | gamestatus = Draw }
+        ( ComputerPlayedPiece, InPlay ComputerChoosing ) ->
+            model.board
+                |> Board.unPlayedPieces
+                |> trySelectpiece
+                |> Maybe.map (\piece -> { model | status = InPlay (HumanPlaying piece) })
+                |> Maybe.withDefault { model | status = Draw }
                 |> withNoEffects
 
-        ( ClickedCellOnGameBoard cell, GameInProgress (HumanPlaying gamepiece) ) ->
+        ( ClickedGameboard cell, InPlay (HumanPlaying gamepiece) ) ->
             updateCellClicked cell gamepiece model
 
-        ( ClickedRestartGameButton, GameWon _ ) ->
+        ( ClickedRestart, Won _ ) ->
             initModel |> withNoEffects
 
-        ( ClickedRestartGameButton, Draw ) ->
+        ( ClickedRestart, Draw ) ->
             initModel |> withNoEffects
 
         _ ->
@@ -440,36 +200,19 @@ update msg model =
 
 updateCellClicked : Cell -> Gamepiece -> Model -> ( Model, Effect )
 updateCellClicked cell piece model =
-    case cell.cellstate of
+    case cell.state of
         Occupied _ ->
             model |> withNoEffects
 
         EmptyCell ->
-            updateGamepiecePlaced piece model cell.cellname
+            updateGamepiecePlaced piece model cell.name
                 |> checkForWin (HumanPlaying piece)
 
 
-tryFindAvailableCells : CellBoard -> Maybe Cellname
-tryFindAvailableCells b =
-    [ b.a1
-    , b.a2
-    , b.a3
-    , b.a4
-    , b.b1
-    , b.b2
-    , b.b3
-    , b.b4
-    , b.c1
-    , b.c2
-    , b.c3
-    , b.c4
-    , b.d1
-    , b.d2
-    , b.d3
-    , b.d4
-    ]
-        |> List.filter (\cell -> cell.cellstate == EmptyCell)
-        |> List.map (\cell -> cell.cellname)
+tryFindAvailableCells : BoardState -> Maybe Cellname
+tryFindAvailableCells board =
+    board
+        |> Board.availableCells
         |> List.head
 
 
@@ -480,150 +223,27 @@ trySelectpiece gamepiece =
 
 updateGamepiecePlaced : Gamepiece -> Model -> Cellname -> Model
 updateGamepiecePlaced gamepiece model name =
-    let
-        newBoard =
-            updateCellBoard name gamepiece model.board
-
-        remainingPieces =
-            updateRemaining gamepiece model.remainingPieces
-    in
-    { model | remainingPieces = remainingPieces, board = newBoard }
+    Board.updateBoard name gamepiece model.board
+        |> (\newBoard -> { model | board = newBoard })
 
 
-checkForWin : CurrentTurn -> Model -> ( Model, Effect )
+checkForWin : Turn -> Model -> ( Model, Effect )
 checkForWin turn model =
-    case ( turn, isWin model.board ) of
+    case ( turn, Board.hasMatch model.board ) of
         ( _, True ) ->
-            { model | gamestatus = GameWon (turnToActivePlayer turn) }
+            { model | status = Won (turnToActivePlayer turn) }
                 |> withNoEffects
 
         ( HumanPlaying _, False ) ->
-            { model | gamestatus = GameInProgress HumanSelecting }
+            { model | status = InPlay HumanChoosing }
                 |> withNoEffects
 
         ( ComputerPlaying _, False ) ->
-            { model | gamestatus = GameInProgress ComputerSelecting }
-                |> withEffect (Delay 2 ComputerPlayedGamePiece)
+            { model | status = InPlay ComputerChoosing }
+                |> withEffect (Delay 2 ComputerPlayedPiece)
 
         _ ->
             model |> withNoEffects
-
-
-updateCellBoard : Cellname -> Gamepiece -> CellBoard -> CellBoard
-updateCellBoard name piece board =
-    let
-        newCell =
-            { cellname = name, cellstate = Occupied piece }
-    in
-    case name of
-        A1 ->
-            { board | a1 = newCell }
-
-        A2 ->
-            { board | a2 = newCell }
-
-        A3 ->
-            { board | a3 = newCell }
-
-        A4 ->
-            { board | a4 = newCell }
-
-        B1 ->
-            { board | b1 = newCell }
-
-        B2 ->
-            { board | b2 = newCell }
-
-        B3 ->
-            { board | b3 = newCell }
-
-        B4 ->
-            { board | b4 = newCell }
-
-        C1 ->
-            { board | c1 = newCell }
-
-        C2 ->
-            { board | c2 = newCell }
-
-        C3 ->
-            { board | c3 = newCell }
-
-        C4 ->
-            { board | c4 = newCell }
-
-        D1 ->
-            { board | d1 = newCell }
-
-        D2 ->
-            { board | d2 = newCell }
-
-        D3 ->
-            { board | d3 = newCell }
-
-        D4 ->
-            { board | d4 = newCell }
-
-
-updateRemaining : Gamepiece -> List Gamepiece -> List Gamepiece
-updateRemaining piece remainingPieces =
-    List.filter ((/=) piece) remainingPieces
-
-
-boardToWinnableCells : CellBoard -> List (List Cell)
-boardToWinnableCells board =
-    let
-        isCellFilled { cellstate } =
-            cellstate /= EmptyCell
-    in
-    [ [ board.a1, board.a2, board.a3, board.a4 ] -- column A
-    , [ board.b1, board.b2, board.b3, board.b4 ] -- column B
-    , [ board.c1, board.c2, board.c3, board.c4 ] -- column C
-    , [ board.d1, board.d2, board.d3, board.d4 ] -- column D
-    , [ board.a1, board.b1, board.c1, board.d1 ] -- row 1
-    , [ board.a2, board.b2, board.c2, board.d2 ] -- row 2
-    , [ board.a3, board.b3, board.c3, board.d3 ] -- row 3
-    , [ board.a4, board.b4, board.c4, board.d4 ] -- row 4
-    , [ board.a1, board.b2, board.c3, board.d4 ] -- back slash diagonal
-    , [ board.a4, board.b3, board.c2, board.d1 ] -- forward slash diagonal
-    ]
-        |> List.filter (List.all isCellFilled)
-
-
-matchingDimensions : List Gamepiece -> Bool
-matchingDimensions gamepieces =
-    gamepieces
-        -- convert from list of game pieces to sets of strings
-        |> List.map (gamepieceToList >> Set.fromList)
-        -- { "Circle", "Filled", "Colour1, ""Large"}
-        -- interset the sets to make one set of common values
-        |> Liste.foldl1 Set.intersect
-        -- convert from Maybe set to set
-        |> Maybe.withDefault Set.empty
-        -- return True is set isn't empty, false if it is
-        |> not
-        << Set.isEmpty
-
-
-isWin : CellBoard -> Bool
-isWin board =
-    board
-        -- turn  a board to list of lists of game winning cells
-        |> boardToWinnableCells
-        -- strip cell names
-        |> List.map (List.map (\{ cellstate } -> cellstate))
-        -- convert cells to gamepieces and filter out cells that dont have gamepieces in them
-        |> List.map (List.map cellstateToMaybe)
-        |> List.map (List.filterMap identity)
-        -- filter out those that aren't filled in
-        |> List.filter (\x -> List.length x >= 4)
-        -- turn to list of booleans on if cells have matches
-        |> List.map matchingDimensions
-        -- filter out false values
-        |> List.filter identity
-        -- if any values remain, return  bool
-        |> not
-        << List.isEmpty
 
 
 
@@ -688,9 +308,9 @@ view model =
     { title = "Quarto - Play"
     , body =
         [ column [ spacing 10, centerX ]
-            [ viewRemainingPieces model.remainingPieces
-            , viewGamestatus model.gamestatus
-            , viewBoard model.board
+            [ viewRemainingPieces (Board.unPlayedPieces model.board)
+            , viewGamestatus model.status
+            , viewBoard (Board.playedPieces model.board)
             ]
         ]
     }
@@ -715,14 +335,14 @@ viewGamestatus gamestatus =
             column [] [ el [ Font.center, width fill ] (text "Game Status"), elem ]
     in
     case gamestatus of
-        GameWon winner ->
+        Won winner ->
             row [] [ viewSvgbox [ Svg.text <| "Winner: " ++ winner ], viewRestartButton ]
                 |> containerize
 
         Draw ->
             containerize (row [] [ viewSvgbox [ Svg.text "It's a Draw" ], viewRestartButton ])
 
-        GameInProgress (ComputerPlaying gamepiece) ->
+        InPlay (ComputerPlaying gamepiece) ->
             row []
                 [ text "Piece Selected: "
                 , viewGamepiece gamepiece
@@ -730,7 +350,7 @@ viewGamestatus gamestatus =
                 ]
                 |> containerize
 
-        GameInProgress (HumanPlaying gamepiece) ->
+        InPlay (HumanPlaying gamepiece) ->
             row []
                 [ text "Piece Selected: "
                 , viewGamepiece gamepiece
@@ -738,7 +358,7 @@ viewGamestatus gamestatus =
                 ]
                 |> containerize
 
-        GameInProgress turn ->
+        InPlay turn ->
             row []
                 [ viewSvgbox
                     [ Svg.rect [ Attr.width "60", Attr.height "60", Attr.fill "none" ] [] ]
@@ -748,38 +368,38 @@ viewGamestatus gamestatus =
 
 
 viewCell : Cell -> Element Msg
-viewCell { cellname, cellstate } =
-    case cellstate of
+viewCell { name, state } =
+    case state of
         Occupied gamepiece ->
             viewGamepiece gamepiece
 
         EmptyCell ->
-            viewSvgbox [ Svg.text <| cellnameToString cellname ]
+            viewSvgbox [ Svg.text <| Board.nameToString name ]
 
 
-viewCellButton : Cell -> Element Msg
-viewCellButton cell =
+viewCellButton : PlayedPieces -> Cellname -> Element Msg
+viewCellButton pieces name =
     Input.button
-        [ Border.color Styles.blue, Border.width 5, Region.description (cellStateToDescription cell) ]
-        { onPress = Just (ClickedCellOnGameBoard cell)
-        , label = viewCell cell
+        [ Border.color Styles.blue, Border.width 5, Region.description (cellStateToDescription (toCell name pieces)) ]
+        { onPress = Just (ClickedGameboard (toCell name pieces))
+        , label = viewCell (toCell name pieces)
         }
 
 
 viewRestartButton : Element Msg
 viewRestartButton =
     Input.button [ Background.color Styles.blue, Border.width 5, Font.color Styles.white ]
-        { onPress = Just ClickedRestartGameButton, label = text "Restart" }
+        { onPress = Just ClickedRestart, label = text "Restart" }
 
 
-viewBoard : CellBoard -> Element Msg
-viewBoard cellboard =
+viewBoard : PlayedPieces -> Element Msg
+viewBoard pieces =
     column [ centerX, Region.announce ]
         [ el [ Font.center, width fill ] (text "GameBoard")
-        , row [] <| List.map viewCellButton [ cellboard.a1, cellboard.b1, cellboard.c1, cellboard.d1 ]
-        , row [] <| List.map viewCellButton [ cellboard.a2, cellboard.b2, cellboard.c2, cellboard.d2 ]
-        , row [] <| List.map viewCellButton [ cellboard.a3, cellboard.b3, cellboard.c3, cellboard.d3 ]
-        , row [] <| List.map viewCellButton [ cellboard.a4, cellboard.b4, cellboard.c4, cellboard.d4 ]
+        , row [] <| List.map (viewCellButton pieces) [ A1, B1, C1, D1 ]
+        , row [] <| List.map (viewCellButton pieces) [ A2, B2, C2, D2 ]
+        , row [] <| List.map (viewCellButton pieces) [ A3, B3, C3, D3 ]
+        , row [] <| List.map (viewCellButton pieces) [ A4, B4, C4, D4 ]
         ]
 
 
@@ -790,10 +410,10 @@ viewRemainingPiecesButton gamepiece =
             viewGamepiece gamepiece
 
         ariaDescription =
-            gamepieceToString gamepiece
+            Board.pieceToString gamepiece
     in
     Input.button [ Region.description ariaDescription ]
-        { onPress = Just (ClickedAvailableGampiece gamepiece)
+        { onPress = Just (ClickedPiece gamepiece)
         , label = gamePieceImage
         }
 
@@ -810,13 +430,13 @@ viewGamepiece gamepiece =
 
 
 cellStateToDescription : Cell -> String
-cellStateToDescription { cellname, cellstate } =
-    case cellstate of
+cellStateToDescription { name, state } =
+    case state of
         EmptyCell ->
-            "Cell " ++ cellnameToString cellname ++ ": Empty cell"
+            "Cell " ++ Board.nameToString name ++ ": Empty cell"
 
         Occupied gamepiece ->
-            "Cell " ++ cellnameToString cellname ++ ": " ++ gamepieceToString gamepiece
+            "Cell " ++ Board.nameToString name ++ ": " ++ Board.pieceToString gamepiece
 
 
 
