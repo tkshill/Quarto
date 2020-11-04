@@ -19,12 +19,12 @@ import Element.Input as Input
 import Element.Region as Region
 import Game.Board as Board
     exposing
-        ( BoardState
+        ( Board
         , Cellname(..)
         , Colour(..)
         , Gamepiece
         , Pattern(..)
-        , PlayedPieces
+        , PlayedDict
         , Shape(..)
         , Size(..)
         )
@@ -69,7 +69,7 @@ type alias Cell =
     }
 
 
-toCell : Cellname -> PlayedPieces -> Cell
+toCell : Cellname -> PlayedDict -> Cell
 toCell name pieces =
     case Dict.get (Board.nameToString name) pieces of
         Just gamepiece ->
@@ -97,7 +97,7 @@ type Gamestatus
 
 
 type alias Model =
-    { board : BoardState
+    { board : Board
     , status : Gamestatus
     }
 
@@ -134,7 +134,7 @@ initialTurn =
 
 initModel : Model
 initModel =
-    { board = Board.initialBoard
+    { board = Board.init
     , status = InPlay initialTurn
     }
 
@@ -165,7 +165,7 @@ update msg model =
     case ( msg, model.status ) of
         ( ClickedPiece gamepiece, InPlay HumanChoosing ) ->
             { model | status = InPlay (ComputerPlaying gamepiece) }
-                |> withEffect (Delay 2 HumanChosePiece)
+                |> withEffect (Delay 1 HumanChosePiece)
 
         ( HumanChosePiece, InPlay (ComputerPlaying gamepiece) ) ->
             tryFindAvailableCells model.board
@@ -209,10 +209,10 @@ updateCellClicked cell piece model =
                 |> checkForWin (HumanPlaying piece)
 
 
-tryFindAvailableCells : BoardState -> Maybe Cellname
+tryFindAvailableCells : Board -> Maybe Cellname
 tryFindAvailableCells board =
     board
-        |> Board.availableCells
+        |> Board.openCells
         |> List.head
 
 
@@ -223,7 +223,7 @@ trySelectpiece gamepiece =
 
 updateGamepiecePlaced : Gamepiece -> Model -> Cellname -> Model
 updateGamepiecePlaced gamepiece model name =
-    Board.updateBoard name gamepiece model.board
+    Board.update name gamepiece model.board
         |> (\newBoard -> { model | board = newBoard })
 
 
@@ -377,7 +377,7 @@ viewCell { name, state } =
             viewSvgbox [ Svg.text <| Board.nameToString name ]
 
 
-viewCellButton : PlayedPieces -> Cellname -> Element Msg
+viewCellButton : PlayedDict -> Cellname -> Element Msg
 viewCellButton pieces name =
     Input.button
         [ Border.color Styles.blue, Border.width 5, Region.description (cellStateToDescription (toCell name pieces)) ]
@@ -392,7 +392,7 @@ viewRestartButton =
         { onPress = Just ClickedRestart, label = text "Restart" }
 
 
-viewBoard : PlayedPieces -> Element Msg
+viewBoard : PlayedDict -> Element Msg
 viewBoard pieces =
     column [ centerX, Region.announce ]
         [ el [ Font.center, width fill ] (text "GameBoard")
