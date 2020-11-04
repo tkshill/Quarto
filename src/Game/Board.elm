@@ -1,24 +1,27 @@
 module Game.Board exposing
-    ( BoardState
-    , Cellname(..)
-    , Colour(..)
-    , Gamepiece
-    , Pattern(..)
-    , PlayedPieces
-    , Shape(..)
-    , Size(..)
-    , availableCells
-    , boardStatus
-    , hasMatch
-    , initialBoard
+    ( Board
+    , BoardStatus(..)
+    , PlayedDict
+    , init
     , nameToString
+    , openCells
     , pieceToString
     , playedPieces
+    , status
     , unPlayedPieces
-    , updateBoard
+    , update
     )
 
 import Dict exposing (Dict)
+import Game.Core
+    exposing
+        ( Cellname(..)
+        , Colour(..)
+        , Gamepiece
+        , Pattern(..)
+        , Shape(..)
+        , Size(..)
+        )
 import List.Extra as Liste
 import Set
 
@@ -27,35 +30,7 @@ import Set
 -- Domain
 
 
-type Shape
-    = Square
-    | Circle
-
-
-type Colour
-    = Colour1
-    | Colour2
-
-
-type Pattern
-    = Solid
-    | Hollow
-
-
-type Size
-    = Small
-    | Large
-
-
-type alias Gamepiece =
-    { shape : Shape
-    , colour : Colour
-    , pattern : Pattern
-    , size : Size
-    }
-
-
-type alias PlayedPieces =
+type alias PlayedDict =
     Dict String Gamepiece
 
 
@@ -66,25 +41,6 @@ type FourOf a
         , third : a
         , fourth : a
         }
-
-
-type Cellname
-    = A1
-    | B1
-    | C1
-    | D1
-    | A2
-    | B2
-    | C2
-    | D2
-    | A3
-    | B3
-    | C3
-    | D3
-    | A4
-    | B4
-    | C4
-    | D4
 
 
 type alias GameCell =
@@ -102,7 +58,7 @@ type alias PieceState =
     }
 
 
-type alias BoardState =
+type alias Board =
     List PieceState
 
 
@@ -268,14 +224,14 @@ pieceToString gamepiece =
 -- Played pieces and Unplayed Pieces
 
 
-playedPieces : BoardState -> PlayedPieces
+playedPieces : Board -> PlayedDict
 playedPieces boardstate =
     boardstate
         |> List.filterMap tryPieceStateToCell
         |> List.foldl dictUpdate Dict.empty
 
 
-unPlayedPieces : BoardState -> List Gamepiece
+unPlayedPieces : Board -> List Gamepiece
 unPlayedPieces boardstate =
     boardstate
         |> List.filter (.status >> (==) Unplayed)
@@ -290,8 +246,8 @@ tryPieceStateToCell pstate =
 
 
 tryPieceCellname : PieceStatus -> Maybe Cellname
-tryPieceCellname status =
-    case status of
+tryPieceCellname pstatus =
+    case pstatus of
         Unplayed ->
             Nothing
 
@@ -299,7 +255,7 @@ tryPieceCellname status =
             Just name
 
 
-dictUpdate : GameCell -> PlayedPieces -> PlayedPieces
+dictUpdate : GameCell -> PlayedDict -> PlayedDict
 dictUpdate ( name, piece ) dict =
     Dict.insert (nameToString name) piece dict
 
@@ -308,8 +264,8 @@ dictUpdate ( name, piece ) dict =
 -- INIT
 
 
-initialBoard : BoardState
-initialBoard =
+init : Board
+init =
     Liste.lift4 Gamepiece shapes colours patterns sizes
         |> List.map (PieceState Unplayed)
 
@@ -318,8 +274,8 @@ initialBoard =
 -- UPDATE
 
 
-updateBoard : Cellname -> Gamepiece -> BoardState -> BoardState
-updateBoard name gamepiece board =
+update : Cellname -> Gamepiece -> Board -> Board
+update name gamepiece board =
     let
         pieceUnplayed =
             { status = Unplayed, gamepiece = gamepiece }
@@ -328,7 +284,7 @@ updateBoard name gamepiece board =
             { status = Played name, gamepiece = gamepiece }
 
         nameIsUnused =
-            List.member name (availableCells board)
+            List.member name (openCells board)
     in
     Liste.setIf (\piece -> (piece == pieceUnplayed) && nameIsUnused) piecePlayed board
 
@@ -343,8 +299,8 @@ tryPieceStateToName ps =
             Nothing
 
 
-availableCells : BoardState -> List Cellname
-availableCells board =
+openCells : Board -> List Cellname
+openCells board =
     let
         taken =
             List.filterMap tryPieceStateToName board
@@ -357,8 +313,8 @@ availableCells board =
 -- BOARD status
 
 
-boardStatus : BoardState -> BoardStatus
-boardStatus board =
+status : Board -> BoardStatus
+status board =
     if hasMatch board then
         MatchFound
 
@@ -369,16 +325,16 @@ boardStatus board =
         CanContinue
 
 
-isFull : BoardState -> Bool
+isFull : Board -> Bool
 isFull board =
     board |> unPlayedPieces |> List.isEmpty
 
 
-hasMatch : BoardState -> Bool
+hasMatch : Board -> Bool
 hasMatch board =
     board
         |> playedPieces
-        |> (\pieces -> List.map (playedPiecesToCombos pieces) allWinningNames)
+        |> (\pieces -> List.map (playedPiecesToCombo pieces) allWinningNames)
         |> List.filterMap identity
         |> List.filter isMatchingFourOf
         |> (not << List.isEmpty)
@@ -411,8 +367,8 @@ isMatchingFourOf (FourOf { first, second, third, fourth }) =
         |> (not << Set.isEmpty)
 
 
-playedPiecesToCombos : PlayedPieces -> FourOf Cellname -> Maybe (FourOf Gamepiece)
-playedPiecesToCombos pieces winningNames =
+playedPiecesToCombo : PlayedDict -> FourOf Cellname -> Maybe (FourOf Gamepiece)
+playedPiecesToCombo pieces winningNames =
     let
         get s =
             Dict.get s pieces

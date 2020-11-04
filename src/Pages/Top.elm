@@ -1,151 +1,86 @@
 module Pages.Top exposing
-    ( Effect(..)
-    , Model
+    ( Model
     , Msg
     , Params
-    , initModel
     , page
     , update
     , view
-    , withNoEffects
     )
 
-import Dict
-import Element exposing (Element, centerX, column, el, fill, row, spacing, text, width)
+import Element
+    exposing
+        ( Element
+        , centerX
+        , column
+        , el
+        , fill
+        , row
+        , spacing
+        , text
+        , width
+        )
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
 import Element.Region as Region
-import Game.Board as Board
+import Game
     exposing
-        ( BoardState
-        , Cellname(..)
+        ( Cell
+        , GameStatus(..)
+        , Msg(..)
+        , Player(..)
+        , Turn(..)
+        )
+import Game.Core
+    exposing
+        ( Cellname(..)
         , Colour(..)
         , Gamepiece
         , Pattern(..)
-        , PlayedPieces
         , Shape(..)
         , Size(..)
         )
 import List.Extra as Liste
 import Pages.NotFound exposing (Msg)
-import Process
 import Spa.Document exposing (Document)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url
 import Styles
 import Svg exposing (Svg, svg)
 import Svg.Attributes as Attr
-import Task
 
 
 page : Page Params Model Msg
 page =
     Page.element
-        { init =
-            \params ->
-                init params |> Tuple.mapSecond perform
-        , update =
-            \msg model ->
-                update msg model |> Tuple.mapSecond perform
+        { init = init
+        , update = update
         , view = view
         , subscriptions = subscriptions
         }
 
 
-type alias ChosenPiece =
-    Gamepiece
-
-
-type Cellstatus
-    = EmptyCell
-    | Occupied Gamepiece
-
-
-type alias Cell =
-    { name : Cellname
-    , state : Cellstatus
-    }
-
-
-toCell : Cellname -> PlayedPieces -> Cell
-toCell name pieces =
-    case Dict.get (Board.nameToString name) pieces of
-        Just gamepiece ->
-            Cell name (Occupied gamepiece)
-
-        Nothing ->
-            Cell name EmptyCell
-
-
-type Turn
-    = HumanChoosing
-    | ComputerPlaying ChosenPiece
-    | ComputerChoosing
-    | HumanPlaying ChosenPiece
-
-
-type alias Winner =
-    String
-
-
-type Gamestatus
-    = InPlay Turn
-    | Won Winner
-    | Draw
-
-
 type alias Model =
-    { board : BoardState
-    , status : Gamestatus
-    }
-
-
-
--- Cell Name Helpers
--- Turn helpers
-
-
-turnToActivePlayer : Turn -> String
-turnToActivePlayer turn =
-    case turn of
-        HumanChoosing ->
-            "Human Player"
-
-        HumanPlaying _ ->
-            "Human Player"
-
-        ComputerChoosing ->
-            "Computer Player"
-
-        ComputerPlaying _ ->
-            "Computer Player"
+    { game : Game.Model }
 
 
 
 -- INIT
 
 
-initialTurn : Turn
-initialTurn =
-    HumanChoosing
-
-
 initModel : Model
 initModel =
-    { board = Board.initialBoard
-    , status = InPlay initialTurn
-    }
+    { game = Game.init }
 
 
 type alias Params =
     ()
 
 
-init : Url.Url Params -> ( Model, Effect )
+init : Url.Url Params -> ( Model, Cmd Msg )
 init _ =
-    ( initModel, NoEffect )
+    ( initModel, Cmd.none )
 
 
 
@@ -153,141 +88,26 @@ init _ =
 
 
 type Msg
-    = ClickedPiece Gamepiece
-    | ClickedGameboard Cell
-    | ClickedRestart
-    | HumanChosePiece
-    | ComputerPlayedPiece
+    = GameMessage Game.Msg
 
 
-update : Msg -> Model -> ( Model, Effect )
+gameUpdateToUpdate : Model -> ( Game.Model, Cmd Game.Msg ) -> ( Model, Cmd Msg )
+gameUpdateToUpdate model ( gmodel, gcmds ) =
+    ( { model | game = gmodel }
+    , Cmd.map GameMessage gcmds
+    )
+
+
+
+-- gameMsgToMsg
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case ( msg, model.status ) of
-        ( ClickedPiece gamepiece, InPlay HumanChoosing ) ->
-            { model | status = InPlay (ComputerPlaying gamepiece) }
-                |> withEffect (Delay 2 HumanChosePiece)
-
-        ( HumanChosePiece, InPlay (ComputerPlaying gamepiece) ) ->
-            tryFindAvailableCells model.board
-                |> Maybe.map (updateGamepiecePlaced gamepiece model)
-                |> Maybe.map (checkForWin (ComputerPlaying gamepiece))
-                |> Maybe.withDefault (withNoEffects model)
-
-        ( ComputerPlayedPiece, InPlay ComputerChoosing ) ->
-            model.board
-                |> Board.unPlayedPieces
-                |> trySelectpiece
-                |> Maybe.map (\piece -> { model | status = InPlay (HumanPlaying piece) })
-                |> Maybe.withDefault { model | status = Draw }
-                |> withNoEffects
-
-        ( ClickedGameboard cell, InPlay (HumanPlaying gamepiece) ) ->
-            updateCellClicked cell gamepiece model
-
-        ( ClickedRestart, Won _ ) ->
-            initModel |> withNoEffects
-
-        ( ClickedRestart, Draw ) ->
-            initModel |> withNoEffects
-
-        _ ->
-            model |> withNoEffects
-
-
-
--- Update Helpers
-
-
-updateCellClicked : Cell -> Gamepiece -> Model -> ( Model, Effect )
-updateCellClicked cell piece model =
-    case cell.state of
-        Occupied _ ->
-            model |> withNoEffects
-
-        EmptyCell ->
-            updateGamepiecePlaced piece model cell.name
-                |> checkForWin (HumanPlaying piece)
-
-
-tryFindAvailableCells : BoardState -> Maybe Cellname
-tryFindAvailableCells board =
-    board
-        |> Board.availableCells
-        |> List.head
-
-
-trySelectpiece : List Gamepiece -> Maybe Gamepiece
-trySelectpiece gamepiece =
-    List.head gamepiece
-
-
-updateGamepiecePlaced : Gamepiece -> Model -> Cellname -> Model
-updateGamepiecePlaced gamepiece model name =
-    Board.updateBoard name gamepiece model.board
-        |> (\newBoard -> { model | board = newBoard })
-
-
-checkForWin : Turn -> Model -> ( Model, Effect )
-checkForWin turn model =
-    case ( turn, Board.hasMatch model.board ) of
-        ( _, True ) ->
-            { model | status = Won (turnToActivePlayer turn) }
-                |> withNoEffects
-
-        ( HumanPlaying _, False ) ->
-            { model | status = InPlay HumanChoosing }
-                |> withNoEffects
-
-        ( ComputerPlaying _, False ) ->
-            { model | status = InPlay ComputerChoosing }
-                |> withEffect (Delay 2 ComputerPlayedPiece)
-
-        _ ->
-            model |> withNoEffects
-
-
-
--- Cmd and Effects
-
-
-type alias Seconds =
-    Int
-
-
-type Effect
-    = NoEffect
-    | Delay Seconds Msg
-
-
-
--- Cmd and Effect Helpers
-
-
-delay : Float -> msg -> Cmd msg
-delay time msg =
-    Process.sleep time
-        |> Task.andThen (always <| Task.succeed msg)
-        |> Task.perform identity
-
-
-withEffect : Effect -> Model -> ( Model, Effect )
-withEffect effect model =
-    ( model, effect )
-
-
-withNoEffects : Model -> ( Model, Effect )
-withNoEffects =
-    withEffect NoEffect
-
-
-perform : Effect -> Cmd Msg
-perform effect =
-    case effect of
-        NoEffect ->
-            Cmd.none
-
-        Delay seconds msg ->
-            delay (toFloat seconds * 1000) msg
+    case msg of
+        GameMessage msg_ ->
+            Game.update msg_ model.game
+                |> gameUpdateToUpdate model
 
 
 
@@ -308,9 +128,9 @@ view model =
     { title = "Quarto - Play"
     , body =
         [ column [ spacing 10, centerX ]
-            [ viewRemainingPieces (Board.unPlayedPieces model.board)
-            , viewGamestatus model.status
-            , viewBoard (Board.playedPieces model.board)
+            [ viewRemainingPieces (Game.remainingPieces model.game)
+            , viewGamestatus (Game.currentStatus model.game)
+            , viewBoard (Game.gameboard model.game)
             ]
         ]
     }
@@ -327,7 +147,7 @@ viewRemainingPieces remainingPieces =
         ]
 
 
-viewGamestatus : Gamestatus -> Element Msg
+viewGamestatus : GameStatus -> Element Msg
 viewGamestatus gamestatus =
     let
         containerize : Element Msg -> Element Msg
@@ -336,70 +156,63 @@ viewGamestatus gamestatus =
     in
     case gamestatus of
         Won winner ->
-            row [] [ viewSvgbox [ Svg.text <| "Winner: " ++ winner ], viewRestartButton ]
+            row [] [ viewSvgbox [ Svg.text <| "Winner: " ++ Game.playerToString winner ], viewRestartButton ]
                 |> containerize
 
         Draw ->
-            containerize (row [] [ viewSvgbox [ Svg.text "It's a Draw" ], viewRestartButton ])
+            row [] [ viewSvgbox [ Svg.text "It's a Draw" ], viewRestartButton ]
+                |> containerize
 
-        InPlay (ComputerPlaying gamepiece) ->
+        InPlay player (ChoosingCellToPlay gamepiece) ->
             row []
                 [ text "Piece Selected: "
                 , viewGamepiece gamepiece
-                , text <| "Active Player: " ++ turnToActivePlayer (ComputerPlaying gamepiece)
+                , text <| "Active Player: " ++ Game.playerToString player
                 ]
                 |> containerize
 
-        InPlay (HumanPlaying gamepiece) ->
-            row []
-                [ text "Piece Selected: "
-                , viewGamepiece gamepiece
-                , text <| "Active Player: " ++ turnToActivePlayer (HumanPlaying gamepiece)
-                ]
-                |> containerize
-
-        InPlay turn ->
+        InPlay player ChoosingPiece ->
             row []
                 [ viewSvgbox
                     [ Svg.rect [ Attr.width "60", Attr.height "60", Attr.fill "none" ] [] ]
-                , text <| "Active Player: " ++ turnToActivePlayer turn
+                , text <| "Active Player: " ++ Game.playerToString player
                 ]
                 |> containerize
 
 
 viewCell : Cell -> Element Msg
-viewCell { name, state } =
-    case state of
-        Occupied gamepiece ->
+viewCell { name, status } =
+    case status of
+        Just gamepiece ->
             viewGamepiece gamepiece
 
-        EmptyCell ->
-            viewSvgbox [ Svg.text <| Board.nameToString name ]
+        Nothing ->
+            viewSvgbox [ Svg.text <| Game.nameToString name ]
 
 
-viewCellButton : PlayedPieces -> Cellname -> Element Msg
-viewCellButton pieces name =
+viewCellButton : Cell -> Element Msg
+viewCellButton cell =
     Input.button
-        [ Border.color Styles.blue, Border.width 5, Region.description (cellStateToDescription (toCell name pieces)) ]
-        { onPress = Just (ClickedGameboard (toCell name pieces))
-        , label = viewCell (toCell name pieces)
+        [ Border.color Styles.blue, Border.width 5, Region.description (cellStateToDescription cell) ]
+        { onPress = Just (GameMessage (HumanSelectedCell cell.name))
+        , label = viewCell cell
         }
 
 
 viewRestartButton : Element Msg
 viewRestartButton =
     Input.button [ Background.color Styles.blue, Border.width 5, Font.color Styles.white ]
-        { onPress = Just ClickedRestart, label = text "Restart" }
+        { onPress = Just (GameMessage RestartWanted), label = text "Restart" }
 
 
-viewBoard : PlayedPieces -> Element Msg
-viewBoard pieces =
+viewBoard : (Cellname -> Cell) -> Element Msg
+viewBoard cellDict =
     column [ centerX, Region.announce ]
         [ el [ Font.center, width fill ] (text "GameBoard")
-        , row [] <| List.map (viewCellButton pieces) [ A1, B1, C1, D1 ]
-        , row [] <| List.map (viewCellButton pieces) [ A2, B2, C2, D2 ]
-        , row [] <| List.map (viewCellButton pieces) [ A3, B3, C3, D3 ]
-        , row [] <| List.map (viewCellButton pieces) [ A4, B4, C4, D4 ]
+        , row [] <| List.map (viewCellButton << cellDict) [ A1, B1, C1, D1 ]
+        , row [] <| List.map (viewCellButton << cellDict) [ A2, B2, C2, D2 ]
+        , row [] <| List.map (viewCellButton << cellDict) [ A3, B3, C3, D3 ]
+        , row [] <| List.map (viewCellButton << cellDict) [ A4, B4, C4, D4 ]
         ]
 
 
@@ -410,10 +223,10 @@ viewRemainingPiecesButton gamepiece =
             viewGamepiece gamepiece
 
         ariaDescription =
-            Board.pieceToString gamepiece
+            Game.pieceToString gamepiece
     in
     Input.button [ Region.description ariaDescription ]
-        { onPress = Just (ClickedPiece gamepiece)
+        { onPress = Just (GameMessage (HumanSelectedPiece gamepiece))
         , label = gamePieceImage
         }
 
@@ -430,13 +243,13 @@ viewGamepiece gamepiece =
 
 
 cellStateToDescription : Cell -> String
-cellStateToDescription { name, state } =
-    case state of
-        EmptyCell ->
-            "Cell " ++ Board.nameToString name ++ ": Empty cell"
+cellStateToDescription { name, status } =
+    case status of
+        Nothing ->
+            "Cell " ++ Game.nameToString name ++ ": Empty cell"
 
-        Occupied gamepiece ->
-            "Cell " ++ Board.nameToString name ++ ": " ++ Board.pieceToString gamepiece
+        Just gamepiece ->
+            "Cell " ++ Game.nameToString name ++ ": " ++ Game.pieceToString gamepiece
 
 
 
