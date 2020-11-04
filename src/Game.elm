@@ -22,12 +22,13 @@ import Game.Board as Board
         , BoardStatus(..)
         )
 import Game.Core exposing (Cellname(..), Gamepiece)
-import Helpers exposing (andThen, map, noCmds, withCmd)
+import Helpers exposing (andThen, map, noCmds)
 import List.Nonempty as Listn
 import Process
-import Random
+import Random exposing (Generator)
 import Shared exposing (Model)
 import Task
+import Time
 
 
 
@@ -55,11 +56,6 @@ type alias Cell =
 
 type alias ChosenPiece =
     Gamepiece
-
-
-type GeneratorOptions
-    = GetGamepiece
-    | GetCell
 
 
 type Turn
@@ -115,8 +111,7 @@ update msg (Model model) =
             Model model
                 |> noCmds
                 |> map (nextPlayerStartsPlaying Human piece)
-                |> withCmd (wait 2)
-                |> andThen (computerChooses GetCell)
+                |> andThen (computerChooses ComputerSelectedCell Board.openCells)
 
         ( ComputerSelectedCell name, InPlay Computer (ChoosingCellToPlay piece) ) ->
             Model model
@@ -150,27 +145,29 @@ nextPlayerStartsPlaying player piece (Model model) =
     Model { model | status = InPlay (switch player) (ChoosingCellToPlay piece) }
 
 
-computerChooses : GeneratorOptions -> Model -> ( Model, Cmd Msg )
-computerChooses opt (Model model) =
-    let
-        helper : (a -> Msg) -> List a -> ( Model, Cmd Msg )
-        helper msg lst =
-            lst
-                |> Listn.fromList
-                |> Maybe.map
-                    (\items ->
-                        ( Model model, Random.generate msg (Listn.sample items) )
-                    )
-                |> Maybe.withDefault (Model model |> noCmds)
-    in
-    case opt of
-        GetCell ->
-            Board.openCells model.board
-                |> helper ComputerSelectedCell
+msgGenerator : (a -> Msg) -> Generator a -> (Int -> Msg)
+msgGenerator msgConstructor generator =
+    \num ->
+        Random.initialSeed num
+            |> Random.step generator
+            |> (\( value, _ ) -> msgConstructor value)
 
-        GetGamepiece ->
-            Board.unPlayedPieces model.board
-                |> helper ComputerSelectedPiece
+
+computerChooses : (a -> Msg) -> (Board -> List a) -> Model -> ( Model, Cmd Msg )
+computerChooses msgConstructor boardfunc (Model model) =
+    let
+        generator : Listn.Nonempty a -> Cmd Msg
+        generator items =
+            items
+                |> Listn.sample
+                |> msgGenerator msgConstructor
+                |> delay 2
+    in
+    boardfunc model.board
+        |> Listn.fromList
+        |> Maybe.map generator
+        |> Maybe.withDefault Cmd.none
+        |> (\cmds -> ( Model model, cmds ))
 
 
 playerMakesPlay : Cellname -> Gamepiece -> Model -> Model
@@ -189,8 +186,7 @@ checkForWin player (Model ({ board, status } as model)) =
             Model model
                 |> noCmds
                 |> map (playerStartsChoosing Computer)
-                |> withCmd (wait 2)
-                |> andThen (computerChooses GetGamepiece)
+                |> andThen (computerChooses ComputerSelectedPiece Board.unPlayedPieces)
 
         ( Human, CanContinue ) ->
             Model model
@@ -214,20 +210,15 @@ playerStartsChoosing player (Model model) =
 -- Cmd Msg
 
 
-type Seconds
-    = Seconds Int
+type alias Seconds =
+    Int
 
 
-wait : Int -> Cmd Msg
-wait i =
-    delay (Seconds i) NoOp
-
-
-delay : Seconds -> Msg -> Cmd Msg
-delay (Seconds time) msg =
+delay : Seconds -> (Int -> Msg) -> Cmd Msg
+delay time generator =
     Process.sleep (toFloat <| time * 1000)
-        |> Task.andThen (always <| Task.succeed msg)
-        |> Task.perform identity
+        |> Task.andThen (\_ -> Time.now)
+        |> Task.perform (Time.posixToMillis >> generator)
 
 
 
