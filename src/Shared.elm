@@ -8,11 +8,13 @@ module Shared exposing
     , view
     )
 
+import Browser.Events
 import Browser.Navigation exposing (Key)
 import Element exposing (Element, centerX, column, fill, height, link, newTabLink, padding, row, spacing, text, width)
 import Element.Background as Background
 import Element.Font as Font
 import Element.Region as Region
+import Helpers exposing (noCmds)
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
 import Styles
@@ -24,20 +26,26 @@ import Url exposing (Url)
 
 
 type alias Flags =
-    ()
+    { width : Int
+    , height : Int
+    }
+
+
+init : Flags -> Url -> Key -> ( Model, Cmd Msg )
+init flags url key =
+    Model url key flags
+        |> noCmds
+
+
+
+-- MODEL
 
 
 type alias Model =
     { url : Url
     , key : Key
+    , dimensions : Flags
     }
-
-
-init : Flags -> Url -> Key -> ( Model, Cmd Msg )
-init _ url key =
-    ( Model url key
-    , Cmd.none
-    )
 
 
 
@@ -45,19 +53,20 @@ init _ url key =
 
 
 type Msg
-    = NoOp
+    = WindowResized Int Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model, Cmd.none )
+        WindowResized width height ->
+            { model | dimensions = Flags width height }
+                |> noCmds
 
 
 subscriptions : Model -> Sub Msg
 subscriptions _ =
-    Sub.none
+    Browser.Events.onResize WindowResized
 
 
 

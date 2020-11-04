@@ -41,8 +41,10 @@ import Game.Core
         , Shape(..)
         , Size(..)
         )
+import Helpers exposing (noCmds)
 import List.Extra as Liste
 import Pages.NotFound exposing (Msg)
+import Shared
 import Spa.Document exposing (Document)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url
@@ -53,34 +55,45 @@ import Svg.Attributes as Attr
 
 page : Page Params Model Msg
 page =
-    Page.element
+    Page.application
         { init = init
         , update = update
         , view = view
         , subscriptions = subscriptions
+        , save = save
+        , load = load
         }
 
 
+load : Shared.Model -> Model -> ( Model, Cmd Msg )
+load shared model =
+    { model | dimensions = shared.dimensions }
+        |> noCmds
+
+
+save : Model -> Shared.Model -> Shared.Model
+save _ shared =
+    shared
+
+
 type alias Model =
-    { game : Game.Model }
+    { game : Game.Model
+    , dimensions : Shared.Flags
+    }
 
 
 
 -- INIT
 
 
-initModel : Model
-initModel =
-    { game = Game.init }
-
-
 type alias Params =
     ()
 
 
-init : Url.Url Params -> ( Model, Cmd Msg )
-init _ =
-    ( initModel, Cmd.none )
+init : Shared.Model -> Url.Url Params -> ( Model, Cmd Msg )
+init shared _ =
+    { game = Game.init, dimensions = shared.dimensions }
+        |> noCmds
 
 
 
