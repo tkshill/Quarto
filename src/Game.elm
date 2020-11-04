@@ -1,13 +1,16 @@
 module Game exposing
     ( Cell
-    , Cellname
-    , Gamepiece
+    , GameStatus(..)
     , Model(..)
     , Msg(..)
-    , Status(..)
+    , Player(..)
+    , Turn(..)
     , currentStatus
     , gameboard
     , init
+    , nameToString
+    , pieceToString
+    , playerToString
     , remainingPieces
     , update
     )
@@ -17,9 +20,9 @@ import Game.Board as Board
     exposing
         ( Board
         , BoardStatus(..)
-        , Cellname
-        , Gamepiece
         )
+import Game.Core exposing (Cellname(..), Gamepiece)
+import Helpers exposing (andThen, map, noCmds, withCmd)
 import List.Nonempty as Listn
 import Process
 import Random
@@ -50,14 +53,6 @@ type alias Cell =
     }
 
 
-type alias Cellname =
-    Board.Cellname
-
-
-type alias Gamepiece =
-    Board.Gamepiece
-
-
 type alias ChosenPiece =
     Gamepiece
 
@@ -72,21 +67,21 @@ type Turn
     | ChoosingCellToPlay ChosenPiece
 
 
-type Status
+type GameStatus
     = InPlay ActivePlayer Turn
     | Won Winner
     | Draw
 
 
 type Model
-    = Model { board : Board, status : Status }
+    = Model { board : Board, status : GameStatus }
 
 
 
 -- INIT
 
 
-initStatus : Status
+initStatus : GameStatus
 initStatus =
     InPlay Human ChoosingPiece
 
@@ -216,31 +211,7 @@ playerStartsChoosing player (Model model) =
 
 
 
--- CMD
-
-
-withCmd : Cmd Msg -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-withCmd cmds ( model, moreCmds ) =
-    ( model, Cmd.batch [ cmds, moreCmds ] )
-
-
-noCmds : Model -> ( Model, Cmd Msg )
-noCmds model =
-    ( model, Cmd.none )
-
-
-map : (Model -> Model) -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-map f ma =
-    andThen (noCmds << f) ma
-
-
-andThen : (Model -> ( Model, Cmd Msg )) -> ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
-andThen f ( model, cmds ) =
-    let
-        ( newModel, moreCmds ) =
-            f model
-    in
-    ( newModel, Cmd.batch [ cmds, moreCmds ] )
+-- Cmd Msg
 
 
 type Seconds
@@ -285,6 +256,26 @@ remainingPieces (Model model) =
     Board.unPlayedPieces model.board
 
 
-currentStatus : Model -> Status
+currentStatus : Model -> GameStatus
 currentStatus (Model model) =
     model.status
+
+
+playerToString : Player -> String
+playerToString player =
+    case player of
+        Human ->
+            "Human"
+
+        Computer ->
+            "Computer"
+
+
+nameToString : Cellname -> String
+nameToString =
+    Board.nameToString
+
+
+pieceToString : Gamepiece -> String
+pieceToString =
+    Board.pieceToString

@@ -1,13 +1,7 @@
 module Game.Board exposing
     ( Board
     , BoardStatus(..)
-    , Cellname(..)
-    , Colour(..)
-    , Gamepiece
-    , Pattern(..)
     , PlayedDict
-    , Shape(..)
-    , Size(..)
     , init
     , nameToString
     , openCells
@@ -19,40 +13,21 @@ module Game.Board exposing
     )
 
 import Dict exposing (Dict)
+import Game.Core
+    exposing
+        ( Cellname(..)
+        , Colour(..)
+        , Gamepiece
+        , Pattern(..)
+        , Shape(..)
+        , Size(..)
+        )
 import List.Extra as Liste
 import Set
 
 
 
 -- Domain
-
-
-type Shape
-    = Square
-    | Circle
-
-
-type Colour
-    = Colour1
-    | Colour2
-
-
-type Pattern
-    = Solid
-    | Hollow
-
-
-type Size
-    = Small
-    | Large
-
-
-type alias Gamepiece =
-    { shape : Shape
-    , colour : Colour
-    , pattern : Pattern
-    , size : Size
-    }
 
 
 type alias PlayedDict =
@@ -66,25 +41,6 @@ type FourOf a
         , third : a
         , fourth : a
         }
-
-
-type Cellname
-    = A1
-    | B1
-    | C1
-    | D1
-    | A2
-    | B2
-    | C2
-    | D2
-    | A3
-    | B3
-    | C3
-    | D3
-    | A4
-    | B4
-    | C4
-    | D4
 
 
 type alias GameCell =
@@ -378,7 +334,7 @@ hasMatch : Board -> Bool
 hasMatch board =
     board
         |> playedPieces
-        |> (\pieces -> List.map (playedPiecesToCombos pieces) allWinningNames)
+        |> (\pieces -> List.map (playedPiecesToCombo pieces) allWinningNames)
         |> List.filterMap identity
         |> List.filter isMatchingFourOf
         |> (not << List.isEmpty)
@@ -411,8 +367,8 @@ isMatchingFourOf (FourOf { first, second, third, fourth }) =
         |> (not << Set.isEmpty)
 
 
-playedPiecesToCombos : PlayedDict -> FourOf Cellname -> Maybe (FourOf Gamepiece)
-playedPiecesToCombos pieces winningNames =
+playedPiecesToCombo : PlayedDict -> FourOf Cellname -> Maybe (FourOf Gamepiece)
+playedPiecesToCombo pieces winningNames =
     let
         get s =
             Dict.get s pieces
