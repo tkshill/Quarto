@@ -11,12 +11,12 @@ noCmds model =
     ( model, Cmd.none )
 
 
-map : (a -> a) -> ( a, Cmd msg ) -> ( a, Cmd msg )
+map : (a -> b) -> ( a, Cmd msg ) -> ( b, Cmd msg )
 map f ma =
     andThen (noCmds << f) ma
 
 
-andThen : (a -> ( a, Cmd msg )) -> ( a, Cmd msg ) -> ( a, Cmd msg )
+andThen : (a -> ( b, Cmd msg )) -> ( a, Cmd msg ) -> ( b, Cmd msg )
 andThen f ( model, cmds ) =
     let
         ( newa, moreCmds ) =

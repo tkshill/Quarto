@@ -9,15 +9,22 @@ module Pages.Top exposing
 
 import Element
     exposing
-        ( Element
+        ( Attribute
+        , Element
         , centerX
+        , centerY
         , column
         , el
         , fill
+        , height
+        , padding
+        , paragraph
+        , px
         , row
         , spacing
         , text
         , width
+        , wrappedRow
         )
 import Element.Background as Background
 import Element.Border as Border
@@ -41,8 +48,10 @@ import Game.Core
         , Shape(..)
         , Size(..)
         )
+import Helpers exposing (noCmds)
 import List.Extra as Liste
 import Pages.NotFound exposing (Msg)
+import Shared exposing (Dimensions)
 import Spa.Document exposing (Document)
 import Spa.Page as Page exposing (Page)
 import Spa.Url as Url
@@ -53,34 +62,45 @@ import Svg.Attributes as Attr
 
 page : Page Params Model Msg
 page =
-    Page.element
+    Page.application
         { init = init
         , update = update
         , view = view
         , subscriptions = subscriptions
+        , save = save
+        , load = load
         }
 
 
+load : Shared.Model -> Model -> ( Model, Cmd Msg )
+load shared model =
+    { model | dimensions = shared.dimensions }
+        |> noCmds
+
+
+save : Model -> Shared.Model -> Shared.Model
+save _ shared =
+    shared
+
+
 type alias Model =
-    { game : Game.Model }
+    { game : Game.Model
+    , dimensions : Shared.Flags
+    }
 
 
 
 -- INIT
 
 
-initModel : Model
-initModel =
-    { game = Game.init }
-
-
 type alias Params =
     ()
 
 
-init : Url.Url Params -> ( Model, Cmd Msg )
-init _ =
-    ( initModel, Cmd.none )
+init : Shared.Model -> Url.Url Params -> ( Model, Cmd Msg )
+init shared _ =
+    { game = Game.init, dimensions = shared.dimensions }
+        |> noCmds
 
 
 
@@ -127,10 +147,13 @@ view : Model -> Document Msg
 view model =
     { title = "Quarto - Play"
     , body =
-        [ column [ spacing 10, centerX ]
-            [ viewRemainingPieces (Game.remainingPieces model.game)
-            , viewGamestatus (Game.currentStatus model.game)
-            , viewBoard (Game.gameboard model.game)
+        [ column [ padding 20, spacing 20, centerX ]
+            [ rowOrCol model.dimensions
+                [ centerX ]
+                [ viewBoard (Game.gameboard model.game)
+                , viewRemainingPieces (Game.remainingPieces model.game)
+                ]
+            , viewGamestatus (Game.currentStatus model.game) model.dimensions
             ]
         ]
     }
@@ -138,46 +161,65 @@ view model =
 
 viewRemainingPieces : List Gamepiece -> Element Msg
 viewRemainingPieces remainingPieces =
-    column [ spacing 10, centerX ]
-        [ el [ Font.center, width fill ] (text "Remaining Pieces")
-        , column [ centerX ] <|
-            List.map (row [ centerX ]) <|
+    column [ padding 10, centerX ]
+        [ column [] <|
+            List.map (row []) <|
                 Liste.greedyGroupsOf 4 <|
                     List.map viewRemainingPiecesButton remainingPieces
         ]
 
 
-viewGamestatus : GameStatus -> Element Msg
-viewGamestatus gamestatus =
+viewBoard : (Cellname -> Cell) -> Element Msg
+viewBoard cellDict =
+    column [ Region.announce, centerX ]
+        [ row [] <| List.map (viewCellButton << cellDict) [ A1, B1, C1, D1 ]
+        , row [] <| List.map (viewCellButton << cellDict) [ A2, B2, C2, D2 ]
+        , row [] <| List.map (viewCellButton << cellDict) [ A3, B3, C3, D3 ]
+        , row [] <| List.map (viewCellButton << cellDict) [ A4, B4, C4, D4 ]
+        ]
+
+
+viewGamestatus : GameStatus -> Dimensions -> Element Msg
+viewGamestatus gamestatus dimensions =
     let
-        containerize : Element Msg -> Element Msg
-        containerize elem =
-            column [] [ el [ Font.center, width fill ] (text "Game Status"), elem ]
+        containerize : List (Element Msg) -> Element Msg
+        containerize elements =
+            el [ Font.center, centerX ] (column [ width fill, Font.center, centerX ] elements)
     in
     case gamestatus of
         Won winner ->
-            row [] [ viewSvgbox [ Svg.text <| "Winner: " ++ Game.playerToString winner ], viewRestartButton ]
-                |> containerize
+            containerize [ text <| "The Winner is : " ++ Game.playerToString winner, viewRestartButton ]
 
         Draw ->
-            row [] [ viewSvgbox [ Svg.text "It's a Draw" ], viewRestartButton ]
-                |> containerize
+            containerize [ text "It's a Draw!", viewRestartButton ]
 
         InPlay player (ChoosingCellToPlay gamepiece) ->
-            row []
-                [ text "Piece Selected: "
-                , viewGamepiece gamepiece
-                , text <| "Active Player: " ++ Game.playerToString player
+            let
+                script =
+                    case player of
+                        Human ->
+                            paragraph [] [ text "Click an empty cell to play the piece the computer chose for you. " ]
+
+                        Computer ->
+                            paragraph [] [ text "Computer is thinking of where to play selected gamepiece. " ]
+            in
+            containerize
+                [ script
+                , row [ centerX, Font.center ] [ text "Selected gamepiece: ", viewGamepiece gamepiece ]
                 ]
-                |> containerize
 
         InPlay player ChoosingPiece ->
-            row []
-                [ viewSvgbox
-                    [ Svg.rect [ Attr.width "60", Attr.height "60", Attr.fill "none" ] [] ]
-                , text <| "Active Player: " ++ Game.playerToString player
-                ]
-                |> containerize
+            let
+                script =
+                    case player of
+                        Human ->
+                            text "Choose a piece for the computer to play."
+
+                        Computer ->
+                            text "Computer is choosing a piece for you to play."
+            in
+            containerize
+                [ script ]
 
 
 viewCell : Cell -> Element Msg
@@ -203,17 +245,6 @@ viewRestartButton : Element Msg
 viewRestartButton =
     Input.button [ Background.color Styles.blue, Border.width 5, Font.color Styles.white ]
         { onPress = Just (GameMessage RestartWanted), label = text "Restart" }
-
-
-viewBoard : (Cellname -> Cell) -> Element Msg
-viewBoard cellDict =
-    column [ centerX, Region.announce ]
-        [ el [ Font.center, width fill ] (text "GameBoard")
-        , row [] <| List.map (viewCellButton << cellDict) [ A1, B1, C1, D1 ]
-        , row [] <| List.map (viewCellButton << cellDict) [ A2, B2, C2, D2 ]
-        , row [] <| List.map (viewCellButton << cellDict) [ A3, B3, C3, D3 ]
-        , row [] <| List.map (viewCellButton << cellDict) [ A4, B4, C4, D4 ]
-        ]
 
 
 viewRemainingPiecesButton : Gamepiece -> Element Msg
@@ -323,3 +354,12 @@ makeGamepieceSvg { shape, colour, pattern, size } =
             patternToSvgAttrs pattern
     in
     shapefunc (List.concat [ patternAttributes, colourAttributes, sizeAttributes ]) []
+
+
+rowOrCol : Dimensions -> (List (Attribute msg) -> List (Element msg) -> Element msg)
+rowOrCol dims =
+    if dims.width < 800 then
+        column
+
+    else
+        row
