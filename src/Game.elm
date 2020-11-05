@@ -116,8 +116,15 @@ update msg (Model model) =
         ( ComputerSelectedCell name, InPlay Computer (ChoosingCellToPlay piece) ) ->
             Model model
                 |> noCmds
-                |> map (playerMakesPlay name piece)
-                |> andThen (checkForWin Computer)
+                |> map (playerTryPlay name piece)
+                |> (\( maybeModel, c ) ->
+                        case maybeModel of
+                            Just m ->
+                                andThen (checkForWin Computer) ( m, c )
+
+                            Nothing ->
+                                Model model |> noCmds
+                   )
 
         ( ComputerSelectedPiece piece, InPlay Computer ChoosingPiece ) ->
             Model model
@@ -127,8 +134,15 @@ update msg (Model model) =
         ( HumanSelectedCell name, InPlay Human (ChoosingCellToPlay piece) ) ->
             Model model
                 |> noCmds
-                |> map (playerMakesPlay name piece)
-                |> andThen (checkForWin Human)
+                |> map (playerTryPlay name piece)
+                |> (\( maybeModel, c ) ->
+                        case maybeModel of
+                            Just m ->
+                                andThen (checkForWin Human) ( m, c )
+
+                            Nothing ->
+                                Model model |> noCmds
+                   )
 
         ( RestartWanted, _ ) ->
             init |> noCmds
@@ -161,7 +175,7 @@ computerChooses msgConstructor boardfunc (Model model) =
             items
                 |> Listn.sample
                 |> msgGenerator msgConstructor
-                |> delay 2
+                |> delay 3
     in
     boardfunc model.board
         |> Listn.fromList
@@ -170,13 +184,17 @@ computerChooses msgConstructor boardfunc (Model model) =
         |> (\cmds -> ( Model model, cmds ))
 
 
-playerMakesPlay : Cellname -> Gamepiece -> Model -> Model
-playerMakesPlay name piece (Model model) =
+playerTryPlay : Cellname -> Gamepiece -> Model -> Maybe Model
+playerTryPlay name piece (Model model) =
     let
         newBoard =
             Board.update name piece model.board
     in
-    Model { model | board = newBoard }
+    if newBoard == model.board then
+        Nothing
+
+    else
+        Just (Model { model | board = newBoard })
 
 
 checkForWin : ActivePlayer -> Model -> ( Model, Cmd Msg )
