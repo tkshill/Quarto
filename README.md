@@ -49,18 +49,18 @@ This will likely be a long running project, with many software themes explored. 
 - Basic responsiveness
 - Basic accessiblity markers
 
-# Phase 2 - November 1st, 2020 - December 31st, 2020 (Active)
+## Phase 2 - November 1st, 2020 - December 31st, 2020 (Active)
 - 3D gameboard and game pieces (as part of the 5th Elm [Game Jam](https://itch.io/jam/elm-game-jam-5)
 - Minor UI adjustments
 - Complete PWA functionality
 - Full integration testing
 - Version 1 release
 
-# Phase 3 - January 1st, 2021 - March 31st, 2021 (Upcoming)
+## Phase 3 - January 1st, 2021 - March 31st, 2021 (Upcoming)
 - backend server API design and implementation
 - human vs human options
 
-# Phase 4 - April 1st, 2021 - July 31st (Upcoming)
+## Phase 4 - April 1st, 2021 - July 31st (Upcoming)
 - "Smarter computer" player
 - ML implementation for computer player
 
