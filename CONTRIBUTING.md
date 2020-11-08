@@ -119,13 +119,47 @@ When filing an issue, make sure to answer these three questions:
 
 # Commit message conventions
 
-We tend to use a `Type:Description` style for commit messages so it's easy to see what type of change is being made.
-Common types are:
-- DOCS: - Creating of new documents
-- FIX: - Bug fixes
-- EDIT: - Usually a follow up commit if a small error was spotted in a previous version
-- REFACTOR: - Changing code structure without changing code functionality
-- FEATURE: - Adding new functionality
+>Formatting
+>
+>A properly formed git commit subject line should always be able to complete the following sentence:
+
+    If applied, this commit will your subject line here
+
+>type(scope): subject — footer
+>
+>Types:
+
+    feat— A new feature
+    fix— A bug fix
+    docs— Changes to only documentation
+    style— Changes to formatting (missing semi colons, etc.)
+    refactor— A code change that neither fixes a bug nor adds a feature
+    test— Adding missing or correcting existing tests
+    chore— Change to build process or auxiliary tools, or maintenance
+
+>Scope:
+
+    Focal point of new code or best description for where changes can be found.
+
+>Subject:
+
+    Imperative description of changes, kept under 50 characters (not capitalized and no period)
+
+>Footer:
+
+    GitHub Issue reference ID
+
+>Examples
+```
+feat(utilities): include optional state for test utility - I22
+    // implement a feature in src/utilities/test/sagaTest.js
+test(sagas): initiate test for failed templates fetch - I22
+    // tests run in and of src/sagas/*
+chore(package): install saga testing library - I22
+    // edits to dependencies in package.json
+docs(README): add netlify badge and update - I27
+    // alter documentation in the readme file
+```
 
 # Labelling Conventions
 
@@ -133,3 +167,6 @@ This repository has three basic types of labels:
 - `Type` - The nature of the issue. BUG, FEATURE, QUESTION, or DOCUMENTATION (will be pre-assigned if using issue templates). Only one active per issue
 - `Status` - What part of the process is this issue in. e.g. Active, Needs Review, Resolved, etc. (will be filled in by maintainers and some contributors). Only one active per issue.
 - `Context` - Additional info that helps people parse issues. e.g. "good first issue", "for maintainer only". Multiple may be active on one issue.
+
+# Additional Resources
+Our guide is heavily influenceing by [this article](https://dev.to/irmerk/git-workflow-etiquette-1kgj) by Jolene Langlinais, and has certainly helped us get better at this process.
