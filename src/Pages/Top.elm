@@ -184,7 +184,7 @@ viewGamestatus gamestatus dimensions =
     let
         containerize : List (Element Msg) -> Element Msg
         containerize elements =
-            el [ Font.center, centerX ] (column [ width fill, Font.center, centerX ] elements)
+            el [ Font.center, centerX ] (column [ width fill, spacing 5, Font.center, centerX ] elements)
     in
     case gamestatus of
         Won winner ->
@@ -243,7 +243,7 @@ viewCellButton cell =
 
 viewRestartButton : Element Msg
 viewRestartButton =
-    Input.button [ Background.color Styles.blue, Border.width 5, Font.color Styles.white ]
+    Input.button [ Background.color Styles.white, Border.width 5, Border.color Styles.blue, padding 5, centerX, Font.color Styles.blue ]
         { onPress = Just (GameMessage RestartWanted), label = text "Restart" }
 
 
