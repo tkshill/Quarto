@@ -24,7 +24,8 @@ Check out the live [Demo](https://elmquarto.netlify.app)!
 # Table of Contents
 - [Roadmap](https://github.com/tkshill/Quarto/blob/main/README.md#roadmap)
 - [Run and Install](https://github.com/tkshill/Quarto/blob/main/README.md#run-and-install)
-- [Contributing and Code of Conduct](https://github.com/tkshill/Quarto/blob/main/README.md#contributing-and-code-of-conduct)
+- [Contributing](https://github.com/tkshill/Quarto/blob/main/README.md#code-of-conduct)
+- [Code of Conduct](https://github.com/tkshill/Quarto/blob/main/README.md#contributing)
 - [What is Quarto (detailed)](https://github.com/tkshill/Quarto/blob/main/README.md#what-is-quarto)
 - [F.A.Q.](https://github.com/tkshill/Quarto/blob/main/README.md#f.a.q.)
 - [Tech Stack](https://github.com/tkshill/Quarto/blob/main/README.md#tech-stack-proposed)
