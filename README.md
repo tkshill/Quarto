@@ -11,9 +11,13 @@
 
 # Welcome to Quarto!
 
-Hey, thanks for stopping by.
+## What is Quarto?
 
-This is a small open source project to create - and provide example of - a fully functional, **professional**, _accessible_ web app based on the popular (and highly entertaining) board game [Quarto](https://en.wikipedia.org/wiki/Quarto_(board_game)). The front end is design *fully* in the [Elm programming language](https://elm-lang.org/).
+Hey, thanks for stopping by. This is an open-source, digital representation of the [Quarto](https://en.wikipedia.org/wiki/Quarto_(board_game) board game written in the [Elm](https://elm-lang.org/) programming language.
+
+## Why is Quarto?
+
+This project was mainly created to provide an example of a fully functional, **professional**, _accessible_ web app created entirely in Elm. It is also a space where people interested with working with Elm and/or are interested in open-source have a safe environment to practise with the help and guidance of the project maintainers. We happily accept anyone and everyone who wants to contribute, provided they abide by the code of content (link in the Table of Contents below).
 
 Check out the live [Demo](https://elmquarto.netlify.app)!
 
@@ -21,12 +25,13 @@ Check out the live [Demo](https://elmquarto.netlify.app)!
 - [Roadmap](https://github.com/tkshill/Quarto/blob/main/README.md#roadmap)
 - [Run and Install](https://github.com/tkshill/Quarto/blob/main/README.md#run-and-install)
 - [Contributing and Code of Conduct](https://github.com/tkshill/Quarto/blob/main/README.md#contributing-and-code-of-conduct)
-- [What is Quarto](https://github.com/tkshill/Quarto/blob/main/README.md#what-is-quarto)
-- [Hacktoberfest](https://github.com/tkshill/Quarto/blob/main/README.md#hacktoberfest)
-
+- [What is Quarto (detailed)](https://github.com/tkshill/Quarto/blob/main/README.md#what-is-quarto)
 - [F.A.Q.](https://github.com/tkshill/Quarto/blob/main/README.md#f.a.q.)
 - [Tech Stack](https://github.com/tkshill/Quarto/blob/main/README.md#tech-stack-proposed)
 - [Contact](https://github.com/tkshill/Quarto/blob/main/README.md#contact)
+- [Authors](https://github.com/tkshill/Quarto/blob/main/README.md#authors)
+- [Contributors](https://github.com/tkshill/Quarto/blob/main/README.md#contributors)
+- [Acknowledgments](https://github.com/tkshill/Quarto/blob/main/README.md#acknowledgments)
 - [License](https://github.com/tkshill/Quarto/blob/main/README.md#license)
 
 # Roadmap
@@ -68,30 +73,31 @@ This will likely be a long running project, with many software themes explored. 
 # Run and Install
 
 1. If you don't have it already, download and install [NODE.js](https://nodejs.org/en/download/)
-2. Download and install [Elm](https://guide.elm-lang.org/install/elm.html)
-3. Install [elm-spa](https://www.elm-spa.dev) via npm:
+2. If you don't have it already, install the appropriate [git](https://git-scm.com/downloads) for your OS.
+3. Download and install [Elm](https://guide.elm-lang.org/install/elm.html)
+4. Install [elm-spa](https://www.elm-spa.dev) via npm:
 ```
 npm install -g elm-spa@latest
 ```
-4. Fork this repo
-5. Create a local copy on your machine
-6. In a shell terminal/command line, navigate to the Quarto folder in the repository
-7. Run the live development server with:
+5. Fork this repo
+6. Create a local copy on your machine
+7. In a shell terminal/command line, navigate to the Quarto folder in the repository
+8. Run the live development server with:
 ```
 npm start
 ```
-8. Navigate to the localhost port indicated by the server. (Default should be localhost:8000)
+9. Navigate to the localhost port indicated by the server. (Default should be localhost:8000)
+10. While not required, it is HIGHLY recommended that you install the appropriate [plugin](https://github.com/elm/editor-plugins) for your Code Editor/Integrated Develoment Environment if you wish to write Elm locally on your own machine.
 
 A more in-depth guide can be found in the [CONTRIBUTING](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md)
+
+# Tests
+
+Coming Soon!
 
 # Contributing
 
 The incentive to start this project was out of a desire to learn more about good front-end desire and accessiblity, but also as part of the 2020 [Hacktoberfest]() initiative. This is an open source project that accepts anyone and everyone who is willing to help out. If you are unsure how to do your first contributions, please check out the [contributing](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md) file that lays out exactly how to get involved in open source.
-
-**Warning about contributions before October 1st**
-
-This project is set to be ready for contributions by October 1st, 2020. Until that time, projects code, folders, available issues and many of the static files (including this README) may change. Contributors aren't necessarily discouraged from contributing during this setup stage, but we ask contributors create an [issue]() first, before attempting [pull requests] so the project maintainers can advise on the best course of action. 
-
 
 # Code of Conduct
 
@@ -123,11 +129,11 @@ This app has no affiliation with the official Quarto game, and will never *ever*
 
 # Hacktoberfest!
 
-This project is part of the 2020 [Hacktoberfest](https://hacktoberfest.digitalocean.com) initiative, designed to get more developers, especially newbies, involved in open source projects and remote contributions.
+This project was part of the 2020 [Hacktoberfest](https://hacktoberfest.digitalocean.com) initiative, designed to get more developers, especially newbies, involved in open source projects and remote contributions.
 
 A few key points on what this means:
-- Some issues will be given the `Hacktoberfest` label, meaning that we are making them available to be tackled during the month of October onwards
-- **For the month of October, anyone who wants to contribute can ask to pair on an issue, and the maintainers will schedule a 60-90 minute session where we walk you through getting set up, working through the issue, and submitting a PR.**
+- Some issues were given the `Hacktoberfest` label, meaning that we are making them available to be tackled during the month of October onwards
+- For the month of October, anyone who wants to contribute can ask to pair on an issue, and the maintainers will schedule a 60-90 minute session where we walk you through getting set up, working through the issue, and submitting a PR. **This has been extended indefinitely. You should request to pair!**
 - The label `good first issue` has been included on some issues. **Those issues will be assigned exclusively for new developers/people with limited github/git/OSS experience**
 - Please ask questions about anything you are confused about. We've made some issue templates to help guide people on how to structure their questions and concerns, but feel free to express yourself, as long as it's in a kind and conscientious manner.
 
@@ -172,7 +178,36 @@ For more long form, in depth content, check out the project [wiki](https://githu
 
 # Contact
 
-The main way of submitting questions, comments, concerns, or kudos about this project is through the submission of issues. Alternatively, you can reach me at [@tkshillinz](https://twitter.com/tkshillinz) on Twitter 
+The main way of submitting questions, comments, concerns, or kudos about this project is through the submission of issues. Alternatively, you can reach the author at [@tkshillinz](https://twitter.com/tkshillinz) on Twitter or tkshillinz@icloud.com
+
+# Authors
+
+This library was authored by [Kirk Shillingford](https://github.com/tkshill), who is a big nerd.
+
+# Contributors
+
+## Core Contributors
+
+Our other core contributor is [Dominic Duffin](https://github.com/dominicduffin1).
+
+## General Contributors
+
+- [danielott](https://github.com/danieltott)
+- [BekahHW](https://github.com/BekahHW)
+- [tmillerj](https://github.com/tmillerj)
+- [surajrpanchal](https://github.com/surajrpanchal)
+- [mrsantons](https://github.com/mrsantons)
+- [kkterai](https://github.com/kkterai)
+- [gervanna](https://github.com/gervanna)
+- [cambardell](https://github.com/cambardell)
+- [brandonbrown4792](https://github.com/brandonbrown4792)
+- [arpanchhetri](https://github.com/arpanchhetri)
+- [CristhianMotoche](https://github.com/CristhianMotoche)
+- [A-Scratchy](https://github.com/A-Scratchy)
+
+# Acknowledgments
+
+A huge thank you to the [Virtual Coffee](virtualcoffee.io) community who have encouraged, supported, and contributed to this project.
 
 # License
 
