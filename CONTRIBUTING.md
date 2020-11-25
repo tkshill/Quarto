@@ -25,6 +25,7 @@ We really want to make it as easy as possible for newbies to start helping out a
 - [Bug Reporting](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#reporting-a-bug)
 - [Preffered code style](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#preferred-code-style)
 - [Commit message conventions](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#commit-message-conventions)
+- [Review message conventions](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#review-message-conventions)
 - [Labelling conventions](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md#labelling-conventions)
 
 # What type of contributions we're looking for.
@@ -160,6 +161,10 @@ chore(package): install saga testing library - I22
 docs(README): add netlify badge and update - I27
     // alter documentation in the readme file
 ```
+
+# Review message conventions
+
+This repository loosely follows the [Conventional Comments](https://conventionalcomments.org/) style for comments and reviews for submitted work.
 
 # Labelling Conventions
 
