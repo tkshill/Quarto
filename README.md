@@ -13,7 +13,7 @@
 
 ## What is Quarto?
 
-Hey, thanks for stopping by. This is an open-source, digital representation of the [Quarto](https://en.wikipedia.org/wiki/Quarto_(board_game) board game written in the [Elm](https://elm-lang.org/) programming language.
+Hey, thanks for stopping by. This is an open-source, digital representation of the [Quarto](https://en.wikipedia.org/wiki/Quarto_(board_game)) board game written in the [Elm](https://elm-lang.org/) programming language.
 
 ## Why is Quarto?
 
