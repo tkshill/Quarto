@@ -38,6 +38,7 @@ import Game
         , Msg(..)
         , Player(..)
         , Turn(..)
+        , StatusMessage(..)
         )
 import Game.Core
     exposing
@@ -154,6 +155,7 @@ view model =
                 , viewRemainingPieces (Game.remainingPieces model.game)
                 ]
             , viewGamestatus (Game.currentStatus model.game) model.dimensions
+            , viewStatusMessage (Game.currentStatusMessage model.game)
             ]
         ]
     }
@@ -221,6 +223,14 @@ viewGamestatus gamestatus dimensions =
             containerize
                 [ script ]
 
+
+viewStatusMessage : StatusMessage -> Element Msg
+viewStatusMessage statusMessage =
+    case statusMessage of
+        NoMessage ->
+            Element.el [] (Element.text "")
+        SomePiecePlayedWhenNotPlayersTurn ->
+            Element.el [ centerX, Font.center, Region.announce ] (Element.text "It's not your turn to choose a piece!")
 
 viewCell : Cell -> Element Msg
 viewCell { name, status } =

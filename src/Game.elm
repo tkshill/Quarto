@@ -5,6 +5,7 @@ module Game exposing
     , Msg(..)
     , Player(..)
     , Turn(..)
+    , StatusMessage(..)
     , currentStatus
     , gameboard
     , init
@@ -12,6 +13,7 @@ module Game exposing
     , pieceToString
     , playerToString
     , remainingPieces
+    , currentStatusMessage
     , update
     )
 
@@ -68,9 +70,13 @@ type GameStatus
     | Won Winner
     | Draw
 
+type StatusMessage
+    = NoMessage
+    | SomePiecePlayedWhenNotPlayersTurn
+
 
 type Model
-    = Model { board : Board, status : GameStatus }
+    = Model { board : Board, status : GameStatus, statusMessage : StatusMessage }
 
 
 
@@ -82,9 +88,13 @@ initStatus =
     InPlay Human ChoosingPiece
 
 
+initStatusMessage : StatusMessage
+initStatusMessage = NoMessage
+
+
 init : Model
 init =
-    Model { board = Board.init, status = initStatus }
+    Model { board = Board.init, status = initStatus, statusMessage = initStatusMessage }
 
 
 
@@ -113,6 +123,10 @@ update msg (Model model) =
                 |> map (nextPlayerStartsPlaying Human piece)
                 |> andThen (computerChooses ComputerSelectedCell Board.openCells)
 
+        ( HumanSelectedPiece piece, _ ) ->
+            Model { model | statusMessage = SomePiecePlayedWhenNotPlayersTurn }
+                |> noCmds
+
         ( ComputerSelectedCell name, InPlay Computer (ChoosingCellToPlay piece) ) ->
             Model model
                 |> noCmds
@@ -127,12 +141,12 @@ update msg (Model model) =
                    )
 
         ( ComputerSelectedPiece piece, InPlay Computer ChoosingPiece ) ->
-            Model model
+            Model { model | statusMessage = NoMessage }
                 |> noCmds
                 |> map (nextPlayerStartsPlaying Computer piece)
 
         ( HumanSelectedCell name, InPlay Human (ChoosingCellToPlay piece) ) ->
-            Model model
+            Model { model | statusMessage = NoMessage }
                 |> noCmds
                 |> map (playerTryPlay name piece)
                 |> (\( maybeModel, c ) ->
@@ -268,6 +282,11 @@ remainingPieces (Model model) =
 currentStatus : Model -> GameStatus
 currentStatus (Model model) =
     model.status
+
+
+currentStatusMessage : Model -> StatusMessage
+currentStatusMessage (Model model) =
+    model.statusMessage
 
 
 playerToString : Player -> String
