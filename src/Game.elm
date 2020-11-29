@@ -141,7 +141,7 @@ update msg (Model model) =
                    )
 
         ( ComputerSelectedPiece piece, InPlay Computer ChoosingPiece ) ->
-            Model model
+            Model { model | statusMessage = NoMessage }
                 |> noCmds
                 |> map (nextPlayerStartsPlaying Computer piece)
 
