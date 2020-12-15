@@ -12,19 +12,16 @@ import Element
         ( Attribute
         , Element
         , centerX
-        , centerY
         , column
         , el
         , fill
         , height
         , padding
         , paragraph
-        , px
         , row
         , spacing
         , text
         , width
-        , wrappedRow
         )
 import Element.Background as Background
 import Element.Border as Border
@@ -149,17 +146,20 @@ view model =
     { title = "Quarto - Play"
     , body =
         [ column [ padding 20, spacing 20, centerX ]
-            [ rowOrCol model.dimensions
-                [ centerX ]
-                [ viewBoard (Game.gameboard model.game)
-                , viewRemainingPieces (Game.remainingPieces model.game)
-                ]
-            , viewGamestatus (Game.currentStatus model.game) model.dimensions
+            [ viewPlayArea model
+            , viewGamestatus (Game.currentStatus model.game)
             , viewStatusMessage (Game.currentStatusMessage model.game)
             ]
         ]
     }
 
+viewPlayArea : Model -> Element Msg
+viewPlayArea model =
+    rowOrCol model.dimensions
+        [ centerX ]
+        [ viewBoard (Game.gameboard model.game)
+        , viewRemainingPieces (Game.remainingPieces model.game)
+        ]
 
 viewRemainingPieces : List Gamepiece -> Element Msg
 viewRemainingPieces remainingPieces =
@@ -181,8 +181,8 @@ viewBoard cellDict =
         ]
 
 
-viewGamestatus : GameStatus -> Dimensions -> Element Msg
-viewGamestatus gamestatus dimensions =
+viewGamestatus : GameStatus -> Element Msg
+viewGamestatus gamestatus =
     let
         containerize : List (Element Msg) -> Element Msg
         containerize elements =
