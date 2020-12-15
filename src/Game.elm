@@ -76,7 +76,12 @@ type StatusMessage
 
 
 type Model
-    = Model { board : Board, status : GameStatus, statusMessage : StatusMessage }
+    = Model State
+
+type alias State =
+    { board : Board
+    , status : GameStatus
+    , statusMessage : StatusMessage }
 
 
 
@@ -93,8 +98,14 @@ initStatusMessage = NoMessage
 
 
 init : Model
-init =
-    Model { board = Board.init, status = initStatus, statusMessage = initStatusMessage }
+init = toModel init_
+
+init_ : State
+init_ =
+    { board = Board.init
+    , status = initStatus
+    , statusMessage = initStatusMessage
+    }
 
 
 
@@ -113,22 +124,30 @@ type Msg
 
 -- UPDATE
 
+toModel : State -> Model
+toModel = Model
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model -> (Model, Cmd Msg)
 update msg (Model model) =
+    update_ msg model
+    |> map toModel
+
+
+update_ : Msg -> State -> ( State, Cmd Msg )
+update_ msg (model) =
     case ( msg, model.status ) of
         ( HumanSelectedPiece piece, InPlay Human ChoosingPiece ) ->
-            Model model
+            model
                 |> noCmds
                 |> map (nextPlayerStartsPlaying Human piece)
                 |> andThen (computerChooses ComputerSelectedCell Board.openCells)
 
-        ( HumanSelectedPiece piece, _ ) ->
-            Model { model | statusMessage = SomePiecePlayedWhenNotPlayersTurn }
+        ( HumanSelectedPiece _, _ ) ->
+            { model | statusMessage = SomePiecePlayedWhenNotPlayersTurn }
                 |> noCmds
 
         ( ComputerSelectedCell name, InPlay Computer (ChoosingCellToPlay piece) ) ->
-            Model model
+            model
                 |> noCmds
                 |> map (playerTryPlay name piece)
                 |> (\( maybeModel, c ) ->
@@ -137,16 +156,16 @@ update msg (Model model) =
                                 andThen (checkForWin Computer) ( m, c )
 
                             Nothing ->
-                                Model model |> noCmds
+                                model |> noCmds
                    )
 
         ( ComputerSelectedPiece piece, InPlay Computer ChoosingPiece ) ->
-            Model { model | statusMessage = NoMessage }
+            { model | statusMessage = NoMessage }
                 |> noCmds
                 |> map (nextPlayerStartsPlaying Computer piece)
 
         ( HumanSelectedCell name, InPlay Human (ChoosingCellToPlay piece) ) ->
-            Model { model | statusMessage = NoMessage }
+            { model | statusMessage = NoMessage }
                 |> noCmds
                 |> map (playerTryPlay name piece)
                 |> (\( maybeModel, c ) ->
@@ -155,22 +174,21 @@ update msg (Model model) =
                                 andThen (checkForWin Human) ( m, c )
 
                             Nothing ->
-                                Model model |> noCmds
+                                model |> noCmds
                    )
 
         ( RestartWanted, _ ) ->
-            init |> noCmds
+            init_ |> noCmds
 
         ( NoOp, _ ) ->
-            Model model |> noCmds
+            model |> noCmds
 
         _ ->
-            Model model |> noCmds
+            model |> noCmds
 
-
-nextPlayerStartsPlaying : ActivePlayer -> Gamepiece -> Model -> Model
-nextPlayerStartsPlaying player piece (Model model) =
-    Model { model | status = InPlay (switch player) (ChoosingCellToPlay piece) }
+nextPlayerStartsPlaying : ActivePlayer -> Gamepiece -> State -> State
+nextPlayerStartsPlaying player piece model =
+    { model | status = InPlay (switch player) (ChoosingCellToPlay piece) }
 
 
 msgGenerator : (a -> Msg) -> Generator a -> (Int -> Msg)
@@ -181,8 +199,8 @@ msgGenerator msgConstructor generator =
             |> (\( value, _ ) -> msgConstructor value)
 
 
-computerChooses : (a -> Msg) -> (Board -> List a) -> Model -> ( Model, Cmd Msg )
-computerChooses msgConstructor boardfunc (Model model) =
+computerChooses : (a -> Msg) -> (Board -> List a) -> State -> ( State, Cmd Msg )
+computerChooses msgConstructor boardfunc (model) =
     let
         generator : Listn.Nonempty a -> Cmd Msg
         generator items =
@@ -195,11 +213,11 @@ computerChooses msgConstructor boardfunc (Model model) =
         |> Listn.fromList
         |> Maybe.map generator
         |> Maybe.withDefault Cmd.none
-        |> (\cmds -> ( Model model, cmds ))
+        |> (\cmds -> ( model, cmds ))
 
 
-playerTryPlay : Cellname -> Gamepiece -> Model -> Maybe Model
-playerTryPlay name piece (Model model) =
+playerTryPlay : Cellname -> Gamepiece -> State -> Maybe State
+playerTryPlay name piece model =
     let
         newBoard =
             Board.update name piece model.board
@@ -208,34 +226,34 @@ playerTryPlay name piece (Model model) =
         Nothing
 
     else
-        Just (Model { model | board = newBoard })
+        Just { model | board = newBoard }
 
 
-checkForWin : ActivePlayer -> Model -> ( Model, Cmd Msg )
-checkForWin player (Model ({ board, status } as model)) =
+checkForWin : ActivePlayer -> State -> ( State, Cmd Msg )
+checkForWin player ({ board, status } as model) =
     case ( player, Board.status board ) of
         ( Computer, CanContinue ) ->
-            Model model
+            model
                 |> noCmds
                 |> map (playerStartsChoosing Computer)
                 |> andThen (computerChooses ComputerSelectedPiece Board.unPlayedPieces)
 
         ( Human, CanContinue ) ->
-            Model model
+            model
                 |> noCmds
                 |> map (playerStartsChoosing Human)
 
         ( _, MatchFound ) ->
-            Model { model | status = Won player }
+            { model | status = Won player }
                 |> noCmds
 
         ( _, Full ) ->
-            Model { model | status = Draw } |> noCmds
+            { model | status = Draw } |> noCmds
 
 
-playerStartsChoosing : Player -> Model -> Model
-playerStartsChoosing player (Model model) =
-    Model { model | status = InPlay player ChoosingPiece }
+playerStartsChoosing : Player -> State -> State
+playerStartsChoosing player model =
+    { model | status = InPlay player ChoosingPiece }
 
 
 
@@ -307,3 +325,5 @@ nameToString =
 pieceToString : Gamepiece -> String
 pieceToString =
     Board.pieceToString
+
+

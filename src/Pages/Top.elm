@@ -294,7 +294,7 @@ cellStateToDescription { name, status } =
 
 
 
--- Svg gamepiece helper funxtions
+-- Svg gamepiece helper functions
 
 
 viewSvgbox : List (Svg msg) -> Element msg
