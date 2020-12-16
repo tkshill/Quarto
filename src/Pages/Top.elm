@@ -157,8 +157,8 @@ viewPlayArea : Model -> Element Msg
 viewPlayArea model =
     rowOrCol model.dimensions
         [ centerX ]
-        [ viewBoard (Game.gameboard model.game)
-        , viewRemainingPieces (Game.remainingPieces model.game)
+        [ Game.viewBoard model.game
+        , Game.viewRemainingPieces model.game --(Game.remainingPieces model.game)
         ]
 
 viewRemainingPieces : List Gamepiece -> Element Msg

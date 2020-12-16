@@ -4,20 +4,27 @@ module Game exposing
     , Model(..)
     , Msg(..)
     , Player(..)
-    , Turn(..)
     , StatusMessage(..)
+    , Turn(..)
     , currentStatus
+    , currentStatusMessage
     , gameboard
     , init
     , nameToString
     , pieceToString
     , playerToString
     , remainingPieces
-    , currentStatusMessage
     , update
+    , viewBoard
+    , viewRemainingPieces
     )
 
+import Angle
+import Camera3d
+import Color
 import Dict
+import Direction3d
+import Element exposing (Element)
 import Game.Board as Board
     exposing
         ( Board
@@ -25,12 +32,19 @@ import Game.Board as Board
         )
 import Game.Core exposing (Cellname(..), Gamepiece)
 import Helpers exposing (andThen, map, noCmds)
+import Length exposing (Meters)
+import LineSegment3d exposing (LineSegment3d)
+import List.Extra as Liste
 import List.Nonempty as Listn
+import Pixels
+import Point3d
 import Process
 import Random exposing (Generator)
-import Shared exposing (Model)
+import Scene3d exposing (Entity)
+import Scene3d.Material as Material
 import Task
 import Time
+import Viewpoint3d
 
 
 
@@ -70,6 +84,7 @@ type GameStatus
     | Won Winner
     | Draw
 
+
 type StatusMessage
     = NoMessage
     | SomePiecePlayedWhenNotPlayersTurn
@@ -78,10 +93,12 @@ type StatusMessage
 type Model
     = Model State
 
+
 type alias State =
     { board : Board
     , status : GameStatus
-    , statusMessage : StatusMessage }
+    , statusMessage : StatusMessage
+    }
 
 
 
@@ -94,11 +111,14 @@ initStatus =
 
 
 initStatusMessage : StatusMessage
-initStatusMessage = NoMessage
+initStatusMessage =
+    NoMessage
 
 
 init : Model
-init = toModel init_
+init =
+    toModel init_
+
 
 init_ : State
 init_ =
@@ -124,17 +144,20 @@ type Msg
 
 -- UPDATE
 
-toModel : State -> Model
-toModel = Model
 
-update : Msg -> Model -> (Model, Cmd Msg)
+toModel : State -> Model
+toModel =
+    Model
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg (Model model) =
     update_ msg model
-    |> map toModel
+        |> map toModel
 
 
 update_ : Msg -> State -> ( State, Cmd Msg )
-update_ msg (model) =
+update_ msg model =
     case ( msg, model.status ) of
         ( HumanSelectedPiece piece, InPlay Human ChoosingPiece ) ->
             model
@@ -186,6 +209,7 @@ update_ msg (model) =
         _ ->
             model |> noCmds
 
+
 nextPlayerStartsPlaying : ActivePlayer -> Gamepiece -> State -> State
 nextPlayerStartsPlaying player piece model =
     { model | status = InPlay (switch player) (ChoosingCellToPlay piece) }
@@ -200,7 +224,7 @@ msgGenerator msgConstructor generator =
 
 
 computerChooses : (a -> Msg) -> (Board -> List a) -> State -> ( State, Cmd Msg )
-computerChooses msgConstructor boardfunc (model) =
+computerChooses msgConstructor boardfunc model =
     let
         generator : Listn.Nonempty a -> Cmd Msg
         generator items =
@@ -327,3 +351,97 @@ pieceToString =
     Board.pieceToString
 
 
+
+------------- 3d stuff ------------------
+
+
+type alias CenterPoint =
+    ( Float, Float )
+
+
+initCoords : List CenterPoint
+initCoords =
+    let
+        vals =
+            [ -1.5, -0.5, 0.5, 1.5 ]
+
+        helper x y =
+            ( x, y )
+    in
+    Liste.lift2 helper vals vals
+
+
+centerPointToLineSegments : CenterPoint -> List (LineSegment3d Meters coordinates)
+centerPointToLineSegments ( x, y ) =
+    [ LineSegment3d.fromEndpoints ( Point3d.meters (x - 0.5) (y + 0.5) 0, Point3d.meters (x + 0.5) (y + 0.5) 0 )
+    , LineSegment3d.fromEndpoints ( Point3d.meters (x + 0.5) (y + 0.5) 0, Point3d.meters (x + 0.5) (y - 0.5) 0 )
+    , LineSegment3d.fromEndpoints ( Point3d.meters (x + 0.5) (y - 0.5) 0, Point3d.meters (x - 0.5) (y - 0.5) 0 )
+    , LineSegment3d.fromEndpoints ( Point3d.meters (x - 0.5) (y - 0.5) 0, Point3d.meters (x - 0.5) (y + 0.5) 0 )
+    ]
+
+
+allcoords : List (LineSegment3d Meters coordinates)
+allcoords =
+    List.concatMap centerPointToLineSegments initCoords
+
+
+lineSegmentEntities : List (Entity coordinates)
+lineSegmentEntities =
+    List.map (Scene3d.lineSegment (Material.color Color.blue)) allcoords
+
+
+viewBoard : Model -> Element msg
+viewBoard _ =
+    Element.none
+
+
+viewRemainingPieces : Model -> Element msg
+viewRemainingPieces _ =
+    let
+        -- Create a camera using perspective projection
+        camera =
+            Camera3d.perspective
+                { -- Camera is at the point (4, 2, 2), looking at the point
+                  -- (0, 0, 0), oriented so that positive Z appears up
+                  viewpoint =
+                    Viewpoint3d.lookAt
+                        { focalPoint = Point3d.origin
+                        , eyePoint = Point3d.meters 8 4 4
+                        , upDirection = Direction3d.positiveZ
+                        }
+
+                -- The image on the screen will have a total rendered 'height'
+                -- of 30 degrees; small angles make the camera act more like a
+                -- telescope and large numbers make it act more like a fisheye
+                -- lens
+                , verticalFieldOfView = Angle.degrees 30
+                }
+    in
+    -- Render a scene that doesn't involve any lighting (no lighting is needed
+    -- here since we provided a material that will result in a constant color
+    -- no matter what lighting is used)
+    Scene3d.unlit
+        { -- Our scene has a single 'entity' in it
+          entities = lineSegmentEntities
+            -- [ Scene3d.quad (Material.color Color.blue)
+            --     (Point3d.meters -1 -1 0)
+            --     (Point3d.meters 1 -1 0)
+            --     (Point3d.meters 1 1 0)
+            --     (Point3d.meters -1 1 0)
+            -- ]
+
+        -- Provide the camera to be used when rendering the scene
+        , camera = camera
+
+        -- Anything closer than 1 meter to the camera will be clipped away
+        -- (this is necessary because of the internals of how WebGL works)
+        , clipDepth = Length.meters 1
+
+        -- Using a transparent background means that the HTML underneath the
+        -- scene will show through
+        , background = Scene3d.transparentBackground
+
+        -- Size in pixels of the generated HTML element
+        , dimensions = ( Pixels.int 400, Pixels.int 300 )
+        }
+        |> Element.html
