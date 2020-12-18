@@ -1,7 +1,7 @@
 module Game exposing
     ( Cell
     , GameStatus(..)
-    , Model(..)
+    , Model
     , Msg(..)
     , Player(..)
     , StatusMessage(..)
@@ -40,7 +40,7 @@ import Pixels
 import Point3d
 import Process
 import Random exposing (Generator)
-import Scene3d exposing (Entity)
+import Scene3d
 import Scene3d.Material as Material
 import Task
 import Time
@@ -373,21 +373,15 @@ initCoords =
 
 centerPointToLineSegments : CenterPoint -> List (LineSegment3d Meters coordinates)
 centerPointToLineSegments ( x, y ) =
+    -- top line
     [ LineSegment3d.fromEndpoints ( Point3d.meters (x - 0.5) (y + 0.5) 0, Point3d.meters (x + 0.5) (y + 0.5) 0 )
+    -- right line
     , LineSegment3d.fromEndpoints ( Point3d.meters (x + 0.5) (y + 0.5) 0, Point3d.meters (x + 0.5) (y - 0.5) 0 )
+    -- bottom line
     , LineSegment3d.fromEndpoints ( Point3d.meters (x + 0.5) (y - 0.5) 0, Point3d.meters (x - 0.5) (y - 0.5) 0 )
+    -- left line
     , LineSegment3d.fromEndpoints ( Point3d.meters (x - 0.5) (y - 0.5) 0, Point3d.meters (x - 0.5) (y + 0.5) 0 )
     ]
-
-
-allcoords : List (LineSegment3d Meters coordinates)
-allcoords =
-    List.concatMap centerPointToLineSegments initCoords
-
-
-lineSegmentEntities : List (Entity coordinates)
-lineSegmentEntities =
-    List.map (Scene3d.lineSegment (Material.color Color.blue)) allcoords
 
 
 viewBoard : Model -> Element msg
@@ -398,6 +392,10 @@ viewBoard _ =
 viewRemainingPieces : Model -> Element msg
 viewRemainingPieces _ =
     let
+        lineSegmentEntities =
+            initCoords
+            |> List.concatMap centerPointToLineSegments
+            |> List.map (Scene3d.lineSegment (Material.color Color.blue))
         -- Create a camera using perspective projection
         camera =
             Camera3d.perspective
@@ -406,7 +404,7 @@ viewRemainingPieces _ =
                   viewpoint =
                     Viewpoint3d.lookAt
                         { focalPoint = Point3d.origin
-                        , eyePoint = Point3d.meters 8 4 4
+                        , eyePoint = Point3d.meters 7.0 3.5 3.5
                         , upDirection = Direction3d.positiveZ
                         }
 
@@ -442,6 +440,6 @@ viewRemainingPieces _ =
         , background = Scene3d.transparentBackground
 
         -- Size in pixels of the generated HTML element
-        , dimensions = ( Pixels.int 400, Pixels.int 300 )
+        , dimensions = ( Pixels.int 500, Pixels.int 375 )
         }
         |> Element.html
