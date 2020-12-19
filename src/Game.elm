@@ -36,8 +36,10 @@ import Length exposing (Meters)
 import LineSegment3d exposing (LineSegment3d)
 import List.Extra as Liste
 import List.Nonempty as Listn
-import Pixels
-import Point3d
+import Pixels exposing (Pixels, pixels)
+import Plane3d exposing (Plane3d)
+import Point2d exposing (Point2d)
+import Point3d exposing (Point3d)
 import Process
 import Random exposing (Generator)
 import Scene3d
@@ -45,6 +47,10 @@ import Scene3d.Material as Material
 import Task
 import Time
 import Viewpoint3d
+import Axis3d exposing (Axis3d)
+import Rectangle2d exposing (Rectangle2d)
+import Rectangle2d exposing (dimensions)
+import Point3d exposing (coordinates)
 
 
 
@@ -88,6 +94,11 @@ type GameStatus
 type StatusMessage
     = NoMessage
     | SomePiecePlayedWhenNotPlayersTurn
+
+
+--This seems to be necessary from the elm-pool example [elm slack conversation], I don't know why
+type ScreenCoordinates
+    = ScreenCoordinates
 
 
 type Model
@@ -138,6 +149,7 @@ type Msg
     | RestartWanted
     | ComputerSelectedCell Cellname
     | ComputerSelectedPiece Gamepiece
+    | MouseClick (Point2d Pixels ScreenCoordinates)
     | NoOp
 
 
@@ -443,3 +455,44 @@ viewRemainingPieces _ =
         , dimensions = ( Pixels.int 500, Pixels.int 375 )
         }
         |> Element.html
+
+
+-- TODO: Scene information shared between functions should not be copy-pasted, should I think be in the Model
+
+generateRay : Point2d Pixels coordinates -> Axis3d Meters coordinates
+generateRay =
+    let       
+        camera =
+            Camera3d.perspective
+                { -- Camera is at the point (4, 2, 2), looking at the point
+                  -- (0, 0, 0), oriented so that positive Z appears up
+                  viewpoint =
+                    Viewpoint3d.lookAt
+                        { focalPoint = Point3d.origin
+                        , eyePoint = Point3d.meters 7.0 3.5 3.5
+                        , upDirection = Direction3d.positiveZ
+                        }
+
+                -- The image on the screen will have a total rendered 'height'
+                -- of 30 degrees; small angles make the camera act more like a
+                -- telescope and large numbers make it act more like a fisheye
+                -- lens
+                , verticalFieldOfView = Angle.degrees 30
+                }
+        dimensions = 
+            ( Pixels.float 500, Pixels.float 375 )
+    in
+        Camera3d.ray
+            camera
+            (Rectangle2d.with 
+                { x1 = Pixels.float 0
+                , y1 = Tuple.second dimensions
+                , x2 = Tuple.first dimensions
+                , y2 = Pixels.float 0
+                }
+            )
+
+rayIntersectionWithBoardPlane : Axis3d Meters coordinates -> Plane3d Meters coordinates -> Maybe (Point3d Meters coordinates)
+rayIntersectionWithBoardPlane axis3d plane3d =
+    Axis3d.intersectionWithPlane plane3d axis3d
+
