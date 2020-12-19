@@ -20,6 +20,7 @@ module Game exposing
     )
 
 import Angle
+import Browser.Events as Events
 import Camera3d
 import Color
 import Dict
@@ -32,6 +33,7 @@ import Game.Board as Board
         )
 import Game.Core exposing (Cellname(..), Gamepiece)
 import Helpers exposing (andThen, map, noCmds)
+import Json.Decode as D
 import Length exposing (Meters)
 import LineSegment3d exposing (LineSegment3d)
 import List.Extra as Liste
@@ -293,6 +295,13 @@ playerStartsChoosing player model =
 
 
 
+-- Subscriptions
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Events.onClick (mouseClickDecoder MouseClick)
+
+
+
 -- Cmd Msg
 
 
@@ -495,4 +504,11 @@ generateRay =
 rayIntersectionWithBoardPlane : Axis3d Meters coordinates -> Plane3d Meters coordinates -> Maybe (Point3d Meters coordinates)
 rayIntersectionWithBoardPlane axis3d plane3d =
     Axis3d.intersectionWithPlane plane3d axis3d
+
+
+mouseClickDecoder : (Point2d Pixels ScreenCoordinates -> Msg) -> D.Decoder Msg
+mouseClickDecoder msg =
+    D.map2 (\x y -> msg (Point2d.pixels x y))
+        (D.field "pageX" D.float)
+        (D.field "pageY" D.float)
 
