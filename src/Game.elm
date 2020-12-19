@@ -509,7 +509,9 @@ rayIntersectionWithBoardPlane axis3d plane3d =
 
 -- TODO: I think we need to take the Point3d Meters coordinates and use it to determine the square the user clicked on, then use that information to return coordinates to:
     -- if remaining pieces board is clicked, determine the piece selected
-    -- else determine the board square selected and place the selected piece in that square
+    -- otherwise determine the board square selected and place the selected piece in that square
+
+-- I think this needs to be linked to the MouseClick message and handled by model and update
 
 
 mouseClickDecoder : (Point2d Pixels ScreenCoordinates -> Msg) -> D.Decoder Msg
