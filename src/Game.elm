@@ -468,6 +468,8 @@ viewRemainingPieces _ =
 
 -- TODO: Scene information shared between functions should not be copy-pasted, should I think be in the Model
 
+-- Note: coordinates can be replaced by a type if necessary for other workings
+
 generateRay : Point2d Pixels coordinates -> Axis3d Meters coordinates
 generateRay =
     let       
@@ -507,7 +509,7 @@ rayIntersectionWithBoardPlane axis3d plane3d =
 
 -- TODO: I think we need to take the Point3d Meters coordinates and use it to determine the square the user clicked on, then use that information to return coordinates to:
     -- if remaining pieces board is clicked, determine the piece selected
-    -- else determine the board square selected
+    -- else determine the board square selected and place the selected piece in that square
 
 
 mouseClickDecoder : (Point2d Pixels ScreenCoordinates -> Msg) -> D.Decoder Msg
