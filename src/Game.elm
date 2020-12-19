@@ -505,6 +505,10 @@ rayIntersectionWithBoardPlane : Axis3d Meters coordinates -> Plane3d Meters coor
 rayIntersectionWithBoardPlane axis3d plane3d =
     Axis3d.intersectionWithPlane plane3d axis3d
 
+-- TODO: I think we need to take the Point3d Meters coordinates and use it to determine the square the user clicked on, then use that information to return coordinates to:
+    -- if remaining pieces board is clicked, determine the piece selected
+    -- else determine the board square selected
+
 
 mouseClickDecoder : (Point2d Pixels ScreenCoordinates -> Msg) -> D.Decoder Msg
 mouseClickDecoder msg =
