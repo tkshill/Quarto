@@ -30,22 +30,19 @@ import Element.Region as Region
 import Game
     exposing
         ( Cell
+        , Cellname(..)
+        , Colour(..)
         , GameStatus(..)
+        , Gamepiece
         , Msg(..)
+        , Pattern(..)
         , Player(..)
+        , Shape(..)
+        , Size(..)
         , StatusMessage(..)
         , Turn(..)
         )
-import Game.Core
-    exposing
-        ( Cellname(..)
-        , Colour(..)
-        , Gamepiece
-        , Pattern(..)
-        , Shape(..)
-        , Size(..)
-        )
-import Helpers exposing (noCmds)
+import Helpers exposing (lift)
 import List.Extra as Liste
 import Pages.NotFound exposing (Msg)
 import Shared exposing (Dimensions)
@@ -71,13 +68,16 @@ page =
 
 load : Shared.Model -> Model -> ( Model, Cmd Msg )
 load shared model =
-    { model | dimensions = shared.dimensions }
-        |> noCmds
+    lift { model | dimensions = shared.dimensions }
 
 
 save : Model -> Shared.Model -> Shared.Model
 save _ shared =
     shared
+
+
+
+--
 
 
 type alias Model =
@@ -96,8 +96,7 @@ type alias Params =
 
 init : Shared.Model -> Url.Url Params -> ( Model, Cmd Msg )
 init shared _ =
-    { game = Game.init, dimensions = shared.dimensions }
-        |> noCmds
+    lift { game = Game.init, dimensions = shared.dimensions }
 
 
 

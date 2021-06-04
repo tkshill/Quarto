@@ -34,7 +34,7 @@ import Element
 import Element.Background as Background
 import Element.Font as Font
 import Element.Region as Region
-import Helpers exposing (noCmds)
+import Helpers exposing (lift)
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
 import Styles
@@ -60,7 +60,7 @@ type alias Dimensions =
 init : Flags -> Url -> Key -> ( Model, Cmd Msg )
 init flags url key =
     Model url key flags
-        |> noCmds
+        |> lift
 
 
 
@@ -87,7 +87,7 @@ update msg model =
     case msg of
         WindowResized width height ->
             { model | dimensions = Dimensions width height }
-                |> noCmds
+                |> lift
 
 
 subscriptions : Model -> Sub Msg
