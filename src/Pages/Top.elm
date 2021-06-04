@@ -12,19 +12,15 @@ import Element
         ( Attribute
         , Element
         , centerX
-        , centerY
         , column
         , el
         , fill
-        , height
         , padding
         , paragraph
-        , px
         , row
         , spacing
         , text
         , width
-        , wrappedRow
         )
 import Element.Background as Background
 import Element.Border as Border
@@ -37,8 +33,8 @@ import Game
         , GameStatus(..)
         , Msg(..)
         , Player(..)
-        , Turn(..)
         , StatusMessage(..)
+        , Turn(..)
         )
 import Game.Core
     exposing
@@ -182,7 +178,7 @@ viewBoard cellDict =
 
 
 viewGamestatus : GameStatus -> Dimensions -> Element Msg
-viewGamestatus gamestatus dimensions =
+viewGamestatus gamestatus _ =
     let
         containerize : List (Element Msg) -> Element Msg
         containerize elements =
@@ -229,8 +225,10 @@ viewStatusMessage statusMessage =
     case statusMessage of
         NoMessage ->
             Element.el [] (Element.text "")
+
         SomePiecePlayedWhenNotPlayersTurn ->
             Element.el [ centerX, Font.center, Region.announce ] (Element.text "It's not your turn to choose a piece!")
+
 
 viewCell : Cell -> Element Msg
 viewCell { name, status } =
