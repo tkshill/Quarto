@@ -143,7 +143,7 @@ type FourOf a
 
 
 type alias GameCell =
-    ( Cellname, Gamepiece )
+    { name : Cellname, piece : Gamepiece }
 
 
 type PieceStatus
@@ -296,10 +296,6 @@ playerTryPlay name piece (Model model) =
         Just (Model { model | board = newBoard })
 
 
-
--- do not remove unused status param, seems to break elm's record decomposition
-
-
 checkForWin : ActivePlayer -> Model -> ( Model, Cmd Msg )
 checkForWin player (Model ({ board } as model)) =
     case ( player, boardStatus board ) of
@@ -315,11 +311,10 @@ checkForWin player (Model ({ board } as model)) =
                 |> map (playerStartsChoosing Human)
 
         ( _, MatchFound ) ->
-            Model { model | status = Won player }
-                |> lift
+            lift <| Model { model | status = Won player }
 
         ( _, Full ) ->
-            Model { model | status = Draw } |> lift
+            lift <| Model { model | status = Draw }
 
 
 playerStartsChoosing : Player -> Model -> Model
@@ -562,7 +557,7 @@ tryPieceStateToCell : PieceState -> Maybe GameCell
 tryPieceStateToCell pstate =
     pstate.status
         |> tryPieceCellname
-        |> Maybe.map (\name -> ( name, pstate.gamepiece ))
+        |> Maybe.map (\name -> { name = name, piece = pstate.gamepiece })
 
 
 tryPieceCellname : PieceStatus -> Maybe Cellname
@@ -576,7 +571,7 @@ tryPieceCellname pstatus =
 
 
 dictUpdate : GameCell -> PlayedDict -> PlayedDict
-dictUpdate ( name, piece ) dict =
+dictUpdate { name, piece } dict =
     Dict.insert (nameToString name) piece dict
 
 
@@ -597,16 +592,16 @@ initBoard =
 updateBoard : Cellname -> Gamepiece -> Board -> Board
 updateBoard name gamepiece board =
     let
-        pieceUnplayed =
-            { status = Unplayed, gamepiece = gamepiece }
-
-        piecePlayed =
-            { status = Played name, gamepiece = gamepiece }
-
         nameIsUnused =
             List.member name (openCells board)
+
+        isAvailable piece =
+            piece == { status = Unplayed, gamepiece = gamepiece } && nameIsUnused
+
+        newPiece =
+            { status = Played name, gamepiece = gamepiece }
     in
-    Liste.setIf (\piece -> (piece == pieceUnplayed) && nameIsUnused) piecePlayed board
+    Liste.setIf isAvailable newPiece board
 
 
 tryPieceStateToName : PieceState -> Maybe Cellname
