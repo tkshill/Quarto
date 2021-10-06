@@ -15,7 +15,7 @@
 
 Hey, thanks for stopping by. This is an open-source, digital representation of the [Quarto](https://en.wikipedia.org/wiki/Quarto_(board_game)) board game written in the [Elm](https://elm-lang.org/) programming language.
 
-## Why is Quarto?
+## Why a random board game?
 
 This project was mainly created to provide an example of a fully functional, **professional**, _accessible_ web app created entirely in Elm. It is also a space where people interested with working with Elm and/or are interested in open-source have a safe environment to practise with the help and guidance of the project maintainers. We happily accept anyone and everyone who wants to contribute, provided they abide by the code of content (link in the Table of Contents below).
 
@@ -37,16 +37,16 @@ Check out the live [Demo](https://elmquarto.netlify.app)!
 
 # Roadmap
 
-The plan is to create both a single player and multiplayer [Progressive Web App](https://www.howtogeek.com/342121/what-are-progressive-web-apps/) representation of the game. The front elm will be primarily designed using the [Elm](https://elm-lang.org) programming language. All the code will be freely available for use and reuse where possible.
+The plan is to create both a single player and multiplayer representation of the game. The front elm will be primarily designed using the [Elm](https://elm-lang.org) programming language. All the code will be freely available for use and reuse where possible.
 
 This will likely be a long running project, with many software themes explored. Some of the concepts we hope to cover are:
 - Functional Programming techniques
 - Domain driven design and advanced domain modelling
-- Progressive Web Apps
+- API design
 - 3D graphics and design
 - Animations in the browser
 - Machine learning
-- API design
+
 
 ## Phase 1 - October 1st, 2020 to October 31st, 2020 - (Complete)
 - [x] Working implementation of the concept
@@ -55,17 +55,21 @@ This will likely be a long running project, with many software themes explored. 
 - [x] Basic responsiveness
 - [x] Basic accessiblity markers
 
-## Phase 2 - November 1st, 2020 - December 31st, 2020 (Active)
-- [ ] 3D gameboard and game pieces (as part of the 5th Elm [Game Jam](https://itch.io/jam/elm-game-jam-5)
-- [ ] Minor UI adjustments
-- [ ] Complete PWA functionality
-- [ ] Full integration testing
-- [ ] Version 1 release
+## Phase 2 - October 1st, 2021 - October 31st, 2021 (Active)
+- [ ] Upgrade to elm-spa version 6
+- [ ] Add a better landing page with instructions
+- [ ] UX upgrade
+- [ ] Adding Test Suite
+- [ ] CI/CD pipeline
+- [ ] Basic Keyboard functionality
 
-## Phase 3 - January 1st, 2021 - March 31st, 2021 (Upcoming)
+
+## Phase 3 - November 1st, 2021 - December 31st, 2021 (Upcoming)
+- [ ] 3D gameboard and game pieces (as part of the 5th Elm [Game Jam](https://itch.io/jam/elm-game-jam-5)
 - [ ] backend server API design and implementation
 - [ ] human vs human options
 - [ ] keyboard-only functionality
+- [ ] Version 1 release
 
 ## Phase 4 - April 1st, 2021 - July 31st (Upcoming)
 - [ ] "Smarter computer" player
