@@ -6,7 +6,7 @@
 ![Contributors](https://img.shields.io/github/contributors/tkshill/Quarto)
 ![Open Issues](https://img.shields.io/github/issues-raw/tkshill/Quarto)
 ![Virtual Coffee](https://img.shields.io/badge/Virtual-Coffee-red)
-![Hacktoberfest](https://img.shields.io/github/hacktoberfest/2020/tkshill/Quarto?color=orange)
+![Hacktoberfest](https://img.shields.io/github/hacktoberfest/2021/tkshill/Quarto?color=orange)
 ---
 
 # Welcome to Quarto!
