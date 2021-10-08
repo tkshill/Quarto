@@ -107,7 +107,6 @@ type Msg
     | RestartWanted
     | ComputerSelectedCell Cellname
     | ComputerSelectedPiece Gamepiece
-    | NoOp
 
 
 
@@ -160,9 +159,6 @@ update msg (Model model) =
 
         ( RestartWanted, _ ) ->
             init |> noCmds
-
-        ( NoOp, _ ) ->
-            Model model |> noCmds
 
         _ ->
             Model model |> noCmds
