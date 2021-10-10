@@ -37,8 +37,8 @@ import Game
         , GameStatus(..)
         , Msg(..)
         , Player(..)
-        , Turn(..)
         , StatusMessage(..)
+        , Turn(..)
         )
 import Game.Core
     exposing
@@ -156,6 +156,7 @@ view model =
                 ]
             , viewGamestatus (Game.currentStatus model.game) model.dimensions
             , viewStatusMessage (Game.currentStatusMessage model.game)
+            , viewRestartButton model.game
             ]
         ]
     }
@@ -190,24 +191,24 @@ viewGamestatus gamestatus dimensions =
     in
     case gamestatus of
         Won winner ->
-            containerize [ text <| "The Winner is : " ++ Game.playerToString winner, viewRestartButton ]
+            containerize [ text <| "The Winner is : " ++ Game.playerToString winner ]
 
         Draw ->
-            containerize [ text "It's a Draw!", viewRestartButton ]
+            containerize [ text "It's a Draw!" ]
 
         InPlay player (ChoosingCellToPlay gamepiece) ->
             let
                 script =
                     case player of
                         Human ->
-                            paragraph [] [ text "Click an empty cell to play the piece the computer chose for you. ", viewRestartButton ]
+                            paragraph [] [ text "Click an empty cell to play the piece the computer chose for you. " ]
 
                         Computer ->
-                            paragraph [] [ text "Computer is thinking of where to play selected gamepiece. ", viewRestartButton ]
+                            paragraph [] [ text "Computer is thinking of where to play selected gamepiece. " ]
             in
             containerize
                 [ script
-                , row [ centerX, Font.center ] [ text "Selected gamepiece: ", viewGamepiece gamepiece  ]
+                , row [ centerX, Font.center ] [ text "Selected gamepiece: ", viewGamepiece gamepiece ]
                 ]
 
         InPlay player ChoosingPiece ->
@@ -229,8 +230,10 @@ viewStatusMessage statusMessage =
     case statusMessage of
         NoMessage ->
             Element.el [] (Element.text "")
+
         SomePiecePlayedWhenNotPlayersTurn ->
             Element.el [ centerX, Font.center, Region.announce ] (Element.text "It's not your turn to choose a piece!")
+
 
 viewCell : Cell -> Element Msg
 viewCell { name, status } =
@@ -251,10 +254,22 @@ viewCellButton cell =
         }
 
 
-viewRestartButton : Element Msg
-viewRestartButton =
-    Input.button [ Background.color Styles.white, Border.width 5, Border.color Styles.blue, padding 5, centerX, Font.color Styles.blue ]
-        { onPress = Just (GameMessage RestartWanted), label = text "Restart" }
+viewRestartButton : Game.Model -> Element Msg
+viewRestartButton gamemodel =
+    let
+        button =
+            Input.button [ Background.color Styles.white, Border.width 5, Border.color Styles.blue, padding 5, centerX, Font.color Styles.blue ]
+                { onPress = Just (GameMessage RestartWanted), label = text "Restart" }
+    in
+    if gamemodel /= Game.init then
+        button
+    else
+        Element.none
+
+
+
+-- and then stick in the view below the viewStatusMessage
+-- viewRestartButton model.game
 
 
 viewRemainingPiecesButton : Gamepiece -> Element Msg

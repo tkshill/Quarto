@@ -96,7 +96,7 @@ view model =
         [ column (style model)
             [ el [ Region.heading 1, centerX, Font.bold ] (text "What is this project?")
             , paragraph [ width fill, height fill, spacing 5, Font.color Styles.blue ]
-                [ text "This is example project of the game Quarto, built using the Elm programming language." ]
+                [ text "This is an example project of the game Quarto, built using the Elm programming language." ]
             , el [ Region.heading 1, centerX, Font.bold ] (text "What is Quarto")
             , paragraph [ width fill, height fill, spacing 5, Font.color Styles.blue ]
                 [ text "Quarto is a board game for two players invented by Swiss mathematician Blaise Müller. It is published and copyrighted by Gigamic. "
