@@ -84,10 +84,9 @@ This will likely be a long running project, with many software themes explored. 
 ```
 npm install -g elm-spa@latest
 ```
-5. Fork this repo
-6. Create a local copy on your machine
-7. In a shell terminal/command line, navigate to the Quarto folder in the repository
-8. Run the live development server with:
+5. Create a local copy of this repo on your machine. Do not fork it unless you absolutely want to.
+6. In a shell terminal/command line, navigate to the Quarto folder in the repository
+7. Run the live development server with:
 ```
 npm start
 ```
