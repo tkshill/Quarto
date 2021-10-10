@@ -1,0 +1,19 @@
+name: Run Tests on Push and PR
+
+on: [pull_request, push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Elm environment
+      uses: JorelAli/setup-elm@v3
+      with:
+        elm-version: 0.19.1
+    - run: |
+        mkdir ~/.npm-global
+        npm config set prefix '~/.npm-global'
+        PATH=~/.npm-global/bin:$PATH
+        npm install -g elm-test
+        elm-test
