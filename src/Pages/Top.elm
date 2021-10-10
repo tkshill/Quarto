@@ -200,14 +200,14 @@ viewGamestatus gamestatus dimensions =
                 script =
                     case player of
                         Human ->
-                            paragraph [] [ text "Click an empty cell to play the piece the computer chose for you. " ]
+                            paragraph [] [ text "Click an empty cell to play the piece the computer chose for you. ", viewRestartButton ]
 
                         Computer ->
-                            paragraph [] [ text "Computer is thinking of where to play selected gamepiece. " ]
+                            paragraph [] [ text "Computer is thinking of where to play selected gamepiece. ", viewRestartButton ]
             in
             containerize
                 [ script
-                , row [ centerX, Font.center ] [ text "Selected gamepiece: ", viewGamepiece gamepiece ]
+                , row [ centerX, Font.center ] [ text "Selected gamepiece: ", viewGamepiece gamepiece  ]
                 ]
 
         InPlay player ChoosingPiece ->
