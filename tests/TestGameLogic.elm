@@ -9,6 +9,6 @@ suite =
     [
         test "the empty list has 0 length" 
             <| \_ -> Expect.equal 0 
-            <| List.length []
+            <| List.length [1,2,3]
     ]
        
