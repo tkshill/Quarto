@@ -8,7 +8,7 @@ suite =
     describe "Dummy Default Test"
     [
         test "the empty list has 0 length" 
-            <| \_ -> Expect.equal 3 
+            <| \_ -> Expect.equal 2 
             <| List.length [1,2,3]
     ]
        
