@@ -80,18 +80,14 @@ This will likely be a long running project, with many software themes explored. 
 1. If you don't have it already, download and install [NODE.js](https://nodejs.org/en/download/)
 2. If you don't have it already, install the appropriate [git](https://git-scm.com/downloads) for your OS.
 3. Download and install [Elm](https://guide.elm-lang.org/install/elm.html)
-4. Install [elm-spa](https://www.elm-spa.dev) via npm:
-```
-npm install -g elm-spa@latest
-```
-5. Create a local copy of this repo on your machine. Do not fork it unless you absolutely want to.
-6. In a shell terminal/command line, navigate to the Quarto folder in the repository
-7. Run the live development server with:
+4. Create a local copy of this repo on your machine. You do not have to fork.
+5. In a shell terminal/command line, navigate to the Quarto folder in the repository
+6. Run the live development server with:
 ```
 npm start
 ```
 9. Navigate to the localhost port indicated by the server. (Default should be localhost:8000)
-10. While not required, it is HIGHLY recommended that you install the appropriate [plugin](https://github.com/elm/editor-plugins) for your Code Editor/Integrated Develoment Environment if you wish to write Elm locally on your own machine.
+10. While not required, it is HIGHLY recommended that you install the [Elm tooling plugin](https://github.com/elm/editor-plugins) for your Code Editor/Integrated Develoment Environment if you wish to write Elm locally on your own machine. If you're using VSCode, you can find the Elm tooling plugin in the extensions (you'll want the blue Elm tooling one, not the Elm one, which has been deprecated).
 
 A more in-depth guide can be found in the [CONTRIBUTING](https://github.com/tkshill/Quarto/blob/main/CONTRIBUTING.md)
 
