@@ -12,19 +12,16 @@ import Element
         ( Attribute
         , Element
         , centerX
-        , centerY
         , column
         , el
         , fill
-        , height
         , padding
         , paragraph
-        , px
         , row
         , spacing
         , text
         , width
-        , wrappedRow
+        
         )
 import Element.Background as Background
 import Element.Border as Border
@@ -183,7 +180,7 @@ viewBoard cellDict =
 
 
 viewGamestatus : GameStatus -> Dimensions -> Element Msg
-viewGamestatus gamestatus dimensions =
+viewGamestatus gamestatus _ =
     let
         containerize : List (Element Msg) -> Element Msg
         containerize elements =
