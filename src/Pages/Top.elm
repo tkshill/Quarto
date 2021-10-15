@@ -229,7 +229,7 @@ viewStatusMessage statusMessage =
             Element.el [] (Element.text "")
 
         SomePiecePlayedWhenNotPlayersTurn ->
-            Element.el [ centerX, Font.center, Region.announce ] (Element.text "It's not your turn to choose a piece!")
+            Element.el [ centerX, Font.center, Region.announce, Font.color Styles.red, Font.semiBold ] (Element.text "It's not your turn to choose a piece!")
 
 
 viewCell : Cell -> Element Msg
