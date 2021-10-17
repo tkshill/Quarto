@@ -122,7 +122,7 @@ update msg (Model model) =
                 |> map (nextPlayerStartsPlaying Human piece)
                 |> andThen (computerChooses ComputerSelectedCell Board.openCells)
 
-        ( HumanSelectedPiece piece, _ ) ->
+        ( HumanSelectedPiece _, _ ) ->
             Model { model | statusMessage = SomePiecePlayedWhenNotPlayersTurn }
                 |> noCmds
 
@@ -208,7 +208,7 @@ playerTryPlay name piece (Model model) =
 
 
 checkForWin : ActivePlayer -> Model -> ( Model, Cmd Msg )
-checkForWin player (Model ({ board, status } as model)) =
+checkForWin player (Model ({ board } as model)) =
     case ( player, Board.status board ) of
         ( Computer, CanContinue ) ->
             Model model
