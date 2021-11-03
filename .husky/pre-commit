@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-yes | elm-format .  && git add -A .
+elm-format --yes .  && git add -A .
