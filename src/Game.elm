@@ -4,16 +4,16 @@ module Game exposing
     , Model(..)
     , Msg(..)
     , Player(..)
-    , Turn(..)
     , StatusMessage(..)
+    , Turn(..)
     , currentStatus
+    , currentStatusMessage
     , gameboard
     , init
     , nameToString
     , pieceToString
     , playerToString
     , remainingPieces
-    , currentStatusMessage
     , update
     )
 
@@ -70,6 +70,7 @@ type GameStatus
     | Won Winner
     | Draw
 
+
 type StatusMessage
     = NoMessage
     | SomePiecePlayedWhenNotPlayersTurn
@@ -89,7 +90,8 @@ initStatus =
 
 
 initStatusMessage : StatusMessage
-initStatusMessage = NoMessage
+initStatusMessage =
+    NoMessage
 
 
 init : Model
