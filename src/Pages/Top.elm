@@ -21,7 +21,6 @@ import Element
         , spacing
         , text
         , width
-        
         )
 import Element.Background as Background
 import Element.Border as Border
@@ -260,6 +259,7 @@ viewRestartButton gamemodel =
     in
     if gamemodel /= Game.init then
         button
+
     else
         Element.none
 

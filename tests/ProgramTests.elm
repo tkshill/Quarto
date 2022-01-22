@@ -1,4 +1,6 @@
 module ProgramTests exposing (tbd)
 
-tbd: String
-tbd = "To Be Determined" 
+
+tbd : String
+tbd =
+    "To Be Determined"
