@@ -212,6 +212,6 @@ A huge thank you to the [Virtual Coffee](virtualcoffee.io) community who have en
 
 # License
 
-This repository uses the [MIT license](https://github.com/tkshill/Quarto/blob/main/LICENSE)
+This repository uses the [MIT license](https://github.com/tkshill/Quarto/blob/main/LICENSE).
 
 
